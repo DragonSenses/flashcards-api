@@ -8,6 +8,20 @@ A modular and well-documented RESTful backend for managing flashcard-based study
 
 Model View Controller. This comprehensive document aims to guide the steps of development and ease onboarding. 
 
+### Application Structure
+
+Create the following package structure under `src/main/java/com/ken/flashcards`:
+
+```
+├── controller
+├── service
+├── repository
+├── model
+├── dto
+├── config
+└── exception
+```
+
 ### Bootstrap with **Spring Initializr**
 
 Using **Spring Initializr** is an excellent way to bootstrap the project — fast, clean, and Eclipse-friendly.
@@ -156,3 +170,121 @@ public class Flashcard {
 - I opted for **manual foreign key linking** (`String` IDs) rather than JPA relationships (`@ManyToOne`, `@JoinColumn`). This simplifies serialization and avoids lazy loading issues but requires manual integrity checks.
 - Use of `final` fields with Lombok constructors enforces immutability.
 - Validation annotations (`@NotBlank`) ensure data integrity at the API level.
+
+# **DTO (Data Transfer Object)**
+
+> DTOs define the contract between your controller and service logic. They clarify what data gets passed in and returned, and they shape your validation rules (`@NotBlank`, `@Size`, etc.)
+
+In Java Spring Boot, a **DTO (Data Transfer Object)** is a design pattern used to transfer data between different layers of an application, such as the controller, service, and repository layers. It is particularly useful for encapsulating data and ensuring that only the necessary information is exposed or passed around, improving security, performance, and maintainability.
+
+#### Key Features of DTO:
+- **Encapsulation**: DTOs encapsulate data, often representing a subset of fields from an entity or combining fields from multiple entities.
+- **Decoupling**: They decouple the internal domain models (e.g., JPA entities) from the external API or client, preventing overexposure of sensitive or unnecessary data.
+- **Validation**: DTOs can include validation annotations to ensure data integrity when receiving input from clients.
+- **Serialization**: DTOs are often serialized into JSON or XML when interacting with APIs.
+
+#### Benefits of Using DTOs:
+- **Security**: Prevents exposing sensitive fields (e.g., passwords) in API responses.
+- **Flexibility**: Allows customizing the data structure sent to clients without modifying the underlying entity.
+- **Performance**: Reduces the amount of data transferred over the network by including only relevant fields.
+- **Separation of Concerns**: Keeps the domain model focused on business logic while the DTO handles data representation.
+
+---
+
+## ✉️ DTO Overview
+
+The application uses data transfer objects (DTOs) to encapsulate input payloads for resource creation. These classes separate internal domain logic from exposed API contracts and include validation constraints for safer API consumption.
+
+Each DTO is defined as an immutable class using Lombok, and they're located in:
+
+```
+com.ken.flashcards.dto
+```
+
+---
+
+### 📘 1. `CategoryRequest.java`
+
+```java
+@Data
+@NoArgsConstructor(force = true, access = PRIVATE)
+@AllArgsConstructor
+public class CategoryRequest {
+
+  @NotBlank(message = "name is required")
+  private final String name;
+
+}
+```
+
+- Represents a request to create a new `Category`
+- Field:
+  - `name`: required name of the category
+- Uses `@NotBlank` to ensure form submission integrity
+- Implements immutability through `final` fields with Lombok constructors
+
+---
+
+### 📘 2. `StudySessionRequest.java`
+
+```java
+@Data
+@NoArgsConstructor(force = true, access = PRIVATE)
+@AllArgsConstructor
+public class StudySessionRequest {
+
+  @NotBlank(message = "category id is required")
+  private final String categoryId;
+
+  @NotBlank(message = "name is required")
+  private final String name;
+
+}
+```
+
+- Represents creation input for a `StudySession`
+- Fields:
+  - `categoryId`: string reference to an existing `Category`
+  - `name`: session name
+- Designed to validate relationships without enforcing database joins
+- Relies on manual foreign key linking
+
+---
+
+### 📘 3. `FlashcardRequest.java`
+
+```java
+@Data
+@NoArgsConstructor(force = true, access = PRIVATE)
+@AllArgsConstructor
+public class FlashcardRequest {
+
+  @NotBlank(message = "study session id is required")
+  private final String studySessionId;
+
+  @NotBlank(message = "question is required")
+  private final String question;
+
+  @NotBlank(message = "answer is required")
+  private final String answer;
+
+}
+```
+
+- Payload model for flashcard creation
+- Fields:
+  - `studySessionId`: parent reference to a `StudySession`
+  - `question`: the prompt text
+  - `answer`: the response text
+- Ensures data consistency via `@NotBlank` constraints
+
+---
+
+## 🧠 Design Notes
+
+- **Field validation**: All fields include validation annotations for early failure detection at the controller layer.
+- **Immutability**: Each DTO uses `final` fields with forced private no-arg constructors to support deserialization while maintaining object integrity.
+- **Separation of concerns**: These DTOs are not entities. They decouple API contracts from internal persistence, simplifying refactors and mapper logic.
+- **Manual linking**: Foreign keys (`categoryId`, `studySessionId`) are passed as strings — aligning with the domain model's design philosophy.
+
+---
