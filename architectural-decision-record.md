@@ -34,7 +34,25 @@ Using **Spring Initializr** is an excellent way to bootstrap the project — fas
 
 4. Click **Generate**, download the `.zip`, and unzip locally.
 
-5. In Eclipse:
+5. Add more dependencies to `pom.xml`
+
+```xml
+    <!-- Swagger-style API documentation (Add this) -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.0.2</version>
+    </dependency>
+
+    <!-- MySQL connector for database communication (Add this) -->
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+```
+
+6. In Eclipse:
    - **File → Import → Existing Maven Projects**
    - Select the unzipped folder
    - Eclipse will auto-recognize `pom.xml` and set up the build path
