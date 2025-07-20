@@ -17,6 +17,7 @@ Create the following package structure under `src/main/java/com/ken/flashcards`:
 ├── service
 ├── repository
 ├── model
+├── mapper
 ├── dto
 ├── config
 └── exception
@@ -191,7 +192,7 @@ In Java Spring Boot, a **DTO (Data Transfer Object)** is a design pattern used t
 
 ---
 
-## ✉️ DTO Overview
+# ✉️ DTO Overview
 
 The application uses data transfer objects (DTOs) to encapsulate input payloads for resource creation. These classes separate internal domain logic from exposed API contracts and include validation constraints for safer API consumption.
 
@@ -203,7 +204,7 @@ com.ken.flashcards.dto
 
 ---
 
-### 📘 1. `CategoryRequest.java`
+## 📘 1. `CategoryRequest.java`
 
 ```java
 @Data
@@ -225,7 +226,7 @@ public class CategoryRequest {
 
 ---
 
-### 📘 2. `StudySessionRequest.java`
+## 📘 2. `StudySessionRequest.java`
 
 ```java
 @Data
@@ -251,7 +252,7 @@ public class StudySessionRequest {
 
 ---
 
-### 📘 3. `FlashcardRequest.java`
+## 📘 3. `FlashcardRequest.java`
 
 ```java
 @Data
@@ -286,5 +287,70 @@ public class FlashcardRequest {
 - **Immutability**: Each DTO uses `final` fields with forced private no-arg constructors to support deserialization while maintaining object integrity.
 - **Separation of concerns**: These DTOs are not entities. They decouple API contracts from internal persistence, simplifying refactors and mapper logic.
 - **Manual linking**: Foreign keys (`categoryId`, `studySessionId`) are passed as strings — aligning with the domain model's design philosophy.
+
+---
+
+# Mappers Overview
+
+## 🔁 Mapper Layer Overview
+
+The app uses dedicated mapper classes to transform incoming DTOs into JPA entities. This promotes clear separation between API contracts and domain models, reinforces immutability, and prepares the data for persistence.
+
+Each mapper is defined by an interface and corresponding implementation. They rely on a shared utility — `IdGenerator` — to assign unique identifiers when creating entities from DTOs.
+
+### 📦 Package Location  
+All mappers are located in:
+```
+com.ken.flashcards.mapper
+```
+
+---
+
+### 🧭 Design Summary
+
+| Component                | Role                                       |
+|--------------------------|--------------------------------------------|
+| `CategoryMapper`         | Converts `CategoryRequest` → `Category`    |
+| `FlashcardMapper`        | Converts `FlashcardRequest` → `Flashcard`  |
+| `StudySessionMapper`     | Converts `StudySessionRequest` → `StudySession` |
+| `IdGenerator`            | Generates unique `String` IDs for entities |
+| `IdGeneratorImpl`        | UUID-based implementation of `IdGenerator` |
+
+Each mapper is annotated with `@Component` to enable Spring-managed injection and is structured around constructor-based dependency injection of `IdGenerator`.
+
+---
+
+### ⚙️ Example: `FlashcardMapperImpl`
+
+```java
+@Component
+public class FlashcardMapperImpl implements FlashcardMapper {
+
+  private final IdGenerator idGenerator;
+
+  public FlashcardMapperImpl(IdGenerator idGenerator) {
+    this.idGenerator = idGenerator;
+  }
+
+  @Override
+  public Flashcard flashcardFrom(FlashcardRequest request) {
+    return new Flashcard(
+      idGenerator.generateId(),
+      request.getStudySessionId(),
+      request.getQuestion(),
+      request.getAnswer()
+    );
+  }
+}
+```
+
+---
+
+## 🧠 Design Notes
+
+- 🔁 **One-way mapping only**: Each mapper focuses exclusively on DTO-to-entity conversion for creation workflows. Bidirectional mapping (e.g., entity → response DTO) can be introduced later if needed.
+- 🧪 **Testable by design**: Mapper implementations are stateless and rely on injected collaborators (`IdGenerator`), making them ideal targets for unit tests.
+- 🔗 **Manual ID injection**: Instead of generating IDs in the controller or service layers, mappers encapsulate this logic for better cohesion.
+- 📏 **Interface-based structure**: Keeping mappers as interfaces allows for easier swapping with tools like MapStruct or ModelMapper if the project evolves.
 
 ---
