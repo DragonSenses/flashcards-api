@@ -290,9 +290,7 @@ public class FlashcardRequest {
 
 ---
 
-# Mappers Overview
-
-## 🔁 Mapper Layer Overview
+# 🔁 Mapper Layer Overview
 
 The app uses dedicated mapper classes to transform incoming DTOs into JPA entities. This promotes clear separation between API contracts and domain models, reinforces immutability, and prepares the data for persistence.
 
@@ -354,3 +352,43 @@ public class FlashcardMapperImpl implements FlashcardMapper {
 - 📏 **Interface-based structure**: Keeping mappers as interfaces allows for easier swapping with tools like MapStruct or ModelMapper if the project evolves.
 
 ---
+
+# 🗄️ Repository Layer Overview
+
+The application uses Spring Data JPA repositories to abstract database access and simplify persistence logic. Each repository is an interface that extends `JpaRepository`, providing CRUD methods out of the box without requiring implementation.
+
+Repositories are located in:
+
+```
+com.ken.flashcards.repository
+```
+
+---
+
+### 📘 Defined Interfaces
+
+| Repository Interface             | Associated Entity    | ID Type |
+|----------------------------------|----------------------|---------|
+| `CategoryRepository`             | `Category`           | `String` |
+| `StudySessionRepository`         | `StudySession`       | `String` |
+| `FlashcardRepository`            | `Flashcard`          | `String` |
+
+Each repository interface inherits from:
+
+```java
+JpaRepository<EntityType, String>
+```
+
+This enables:
+- `save()`, `findById()`, `deleteById()`, etc.
+- Pagination, sorting, and custom query support
+
+---
+
+### 🧠 Design Notes
+
+- 🧩 **Layer separation**: Repositories encapsulate persistence logic and prevent service classes from touching the EntityManager directly.
+- 🔁 **UUID keys**: All entities use `String` identifiers generated via `IdGenerator`, ensuring consistent usage across repositories.
+- ⚡ **Zero-boilerplate CRUD**: Spring Data JPA provides full CRUD and paging methods without manual implementation.
+- 🔍 **Future extensibility**: Custom queries (e.g. `List<Flashcard> findByStudySessionId(...)`) can be added later without breaking the service layer.
+- 🧪 **Testable logic**: Repositories can be mocked or bootstrapped with H2/Testcontainers for integration testing.
