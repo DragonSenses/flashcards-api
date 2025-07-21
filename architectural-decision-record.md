@@ -392,3 +392,60 @@ This enables:
 - ⚡ **Zero-boilerplate CRUD**: Spring Data JPA provides full CRUD and paging methods without manual implementation.
 - 🔍 **Future extensibility**: Custom queries (e.g. `List<Flashcard> findByStudySessionId(...)`) can be added later without breaking the service layer.
 - 🧪 **Testable logic**: Repositories can be mocked or bootstrapped with H2/Testcontainers for integration testing.
+
+## 🛎️ Service Interface Overview
+
+The `FlashcardService` interface defines application-level operations for managing `Flashcard` resources. It abstracts business logic behind a clear, injectable contract, promoting separation of concerns and testability.
+
+This interface resides in:
+
+```
+com.ken.flashcards.service
+```
+
+---
+
+### 📘 `FlashcardService.java`
+
+```java
+public interface FlashcardService {
+
+  Iterable<Flashcard> findAll();
+
+  Flashcard findById(String id);
+
+  Flashcard createFlashcard(FlashcardRequest request);
+
+  boolean existsById(String id);
+
+  Flashcard save(Flashcard flashcard);
+
+  void deleteById(String id);
+
+  Iterable<Flashcard> findAllByStudySessionId(String studySessionId);
+}
+```
+
+---
+
+### 🔍 Method Overview
+
+| Method                         | Purpose                                   |
+|--------------------------------|--------------------------------------------|
+| `findAll()`                    | Retrieves all flashcards                  |
+| `findById(String id)`          | Finds a flashcard by its unique ID        |
+| `createFlashcard(request)`     | Converts DTO to entity and persists it    |
+| `existsById(String id)`        | Checks existence of a flashcard ID        |
+| `save(flashcard)`              | Persists an entity (external or updated)  |
+| `deleteById(String id)`        | Deletes a flashcard by ID                 |
+| `findAllByStudySessionId(id)`  | Retrieves flashcards linked to a session  |
+
+---
+
+## 🧠 Design Notes
+
+- 🔁 **Interface-first design**: Promotes flexibility; implementation can evolve without breaking API dependencies.
+- 🔧 **DTO-driven creation**: Uses `FlashcardRequest` to abstract external input and enforce validation.
+- 🧩 **Repository delegation**: Each method orchestrates a call to `FlashcardRepository` after applying logic and mapping.
+- 📏 **Consistency**: Method names follow conventional Spring patterns (`findBy`, `deleteBy`, `save`) for intuitive comprehension.
+- 🧪 **Mock-friendly**: Easily mockable in unit tests via interface injection, simplifying controller/service boundary testing.
