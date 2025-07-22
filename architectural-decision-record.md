@@ -525,3 +525,164 @@ public interface FlashcardService {
 - 🧩 **Repository delegation**: Each method orchestrates a call to `FlashcardRepository` after applying logic and mapping.
 - 📏 **Consistency**: Method names follow conventional Spring patterns (`findBy`, `deleteBy`, `save`) for intuitive comprehension.
 - 🧪 **Mock-friendly**: Easily mockable in unit tests via interface injection, simplifying controller/service boundary testing.
+
+# 🛎️ Service Layer Overview
+
+The service layer coordinates application logic by mediating between controllers, mappers, and repositories. It centralizes business rules, orchestrates entity creation, and manages persistence through injected dependencies.
+
+Services are defined as Spring `@Service` components and reside in:
+
+```
+com.ken.flashcards.service
+```
+
+---
+
+### 📘 Defined Services
+
+| Service Class              | Responsibility                        |
+|----------------------------|----------------------------------------|
+| `CategoryService`          | Create and query category resources   |
+| `StudySessionService`      | Create sessions linked to categories |
+| `FlashcardService`         | Create and retrieve flashcards tied to sessions |
+
+---
+
+### ⚙️ Example: `FlashcardService`
+
+```java
+@Service
+public class FlashcardService {
+
+  private final FlashcardRepository repository;
+  private final FlashcardMapper mapper;
+
+  public FlashcardService(FlashcardRepository repository, FlashcardMapper mapper) {
+    this.repository = repository;
+    this.mapper = mapper;
+  }
+
+  public Flashcard create(FlashcardRequest request) {
+    Flashcard flashcard = mapper.flashcardFrom(request);
+    return repository.save(flashcard);
+  }
+
+  public Iterable<Flashcard> findBySession(String sessionId) {
+    return repository.findAllByStudySessionId(sessionId);
+  }
+}
+```
+
+---
+
+## 🧠 Design Notes
+
+- 🧩 **Separation of concerns**: The service layer isolates business operations from web handling and data persistence.
+- 🔁 **Mapper integration**: DTOs are transformed using injected mappers before repository calls.
+- 🧪 **Testable orchestration**: Services can be unit-tested by mocking mappers and repositories independently.
+- 📤 **Controller-friendly APIs**: Service methods are structured to be directly consumable by REST controllers.
+- 🛡️ **Optional validation**: Business rule enforcement and integrity checks (e.g. uniqueness) can be placed here.
+
+## FlashCardServiceImpl
+
+```java
+package com.ken.flashcards.service.impl;
+
+import static java.lang.String.format;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ken.flashcards.dto.FlashcardRequest;
+import com.ken.flashcards.exception.NotFoundException;
+import com.ken.flashcards.mapper.FlashcardMapper;
+import com.ken.flashcards.model.Flashcard;
+import com.ken.flashcards.repository.FlashcardRepository;
+import com.ken.flashcards.service.FlashcardService;
+import com.ken.flashcards.service.StudySessionService;
+import com.ken.flashcards.service.ValidatingService;
+
+@Service
+@Transactional
+public class FlashcardServiceImpl extends ValidatingService implements FlashcardService {
+
+  private final FlashcardRepository repository;
+  private final StudySessionService studySessionService;
+  private final FlashcardMapper mapper;
+
+  @Autowired
+  public FlashcardServiceImpl(FlashcardRepository repository,
+      StudySessionService studySessionService, FlashcardMapper mapper) {
+    this.repository = repository;
+    this.studySessionService = studySessionService;
+    this.mapper = mapper;
+  }
+
+  @Override
+  public Iterable<Flashcard> findAll() {
+    return repository.findAll();
+  }
+
+  @Override
+  public Flashcard findById(String id) {
+    return repository.findById(id)
+        .orElseThrow(() -> new NotFoundException(format("Cannot find flashcard with id = %s", id)));
+  }
+
+  @Override
+  public Flashcard createFlashcard(FlashcardRequest request) {
+    validate(request);
+    Flashcard flashcard = flashcardFrom(request);
+    return repository.save(flashcard);
+  }
+
+  @Override
+  public boolean existsById(String id) {
+    return repository.existsById(id);
+  }
+
+  @Override
+  public Flashcard save(Flashcard flashcard) {
+    validate(flashcard);
+    return repository.save(flashcard);
+  }
+
+  @Override
+  public void deleteById(String id) {
+    repository.deleteById(id);
+  }
+
+  @Override
+  public Iterable<Flashcard> findAllByStudySessionId(String studySessionId) {
+    studySessionService.assertExistsById(studySessionId);
+    return repository.findAllByStudySessionId(studySessionId);
+  }
+
+  private void validate(FlashcardRequest request) {
+    assertNotNull(request);
+    studySessionService.assertExistsById(request.getStudySessionId());
+  }
+
+  private void validate(Flashcard flashcard) {
+    assertNotNull(flashcard);
+    studySessionService.assertExistsById(flashcard.getStudySessionId());
+  }
+
+  private Flashcard flashcardFrom(FlashcardRequest request) {
+    return mapper.flashcardFrom(request);
+  }
+
+}
+```
+
+### ✅ Strengths
+
+- **Constructor-based injection** — ✔️ clean, testable
+- **Extends `ValidatingService`** — ✔️ reusable, DRY validation
+- **Custom exception (`NotFoundException`) usage** — ✔️ semantic error signaling
+- **Clean separation of DTO → entity** — ✔️ delegated to mapper
+- **Transactional scope** — ✔️ ensures atomicity in multi-repo flows
+- **Defensive logic via `studySessionService.assertExistsById()`** — ✔️ pre-checks across layers
+- **Immutable flow** — ✔️ avoids side effects; service remains stateless
+
