@@ -393,7 +393,50 @@ This enables:
 - 🔍 **Future extensibility**: Custom queries (e.g. `List<Flashcard> findByStudySessionId(...)`) can be added later without breaking the service layer.
 - 🧪 **Testable logic**: Repositories can be mocked or bootstrapped with H2/Testcontainers for integration testing.
 
-## 🛎️ Service Interface Overview
+# 🚨 Exception Layer Overview
+
+The exception layer encapsulates error signaling and response mapping across services and controllers. It defines custom runtime exceptions tailored to common failure scenarios such as missing resources, invalid inputs, and conflicting operations.
+
+All exception classes reside in:
+
+```
+com.ken.flashcards.exception
+```
+
+---
+
+### 📘 Defined Exceptions
+
+| Exception Class         | Purpose                                      |
+|-------------------------|----------------------------------------------|
+| `NotFoundException`     | Indicates missing entities or invalid IDs    |
+| `BadRequestException`   | Signals malformed or invalid request data    |
+| `ConflictException`     | Represents duplicate or conflicting resources |
+
+---
+
+### 🔍 Usage Pattern
+
+Custom exceptions are thrown within service methods like:
+
+```java
+return repository.findById(id)
+    .orElseThrow(() -> new NotFoundException("Flashcard not found with ID: " + id));
+```
+
+And can be caught at the controller level or handled globally via a `RestControllerAdvice` class.
+
+---
+
+## 🧠 Design Notes
+
+- 🎯 **Semantic errors**: Each exception expresses a specific failure mode, improving clarity for client-side consumption.
+- 📦 **Layer decoupling**: Exceptions are centrally defined, enabling reuse across services, controllers, and future validators.
+- 🧪 **Testability**: Service methods can be unit-tested to assert that exceptions are thrown under edge cases.
+- 📤 **REST compliance**: Supports clean HTTP status mapping (e.g., 404 for not found, 400 for bad request, 409 for conflict).
+- 🛡️ **Extensible structure**: Future additions (e.g., `UnauthorizedException`) can plug into the same package and handling mechanism.
+
+# 🛎️ Service Interface Overview
 
 The `FlashcardService` interface defines application-level operations for managing `Flashcard` resources. It abstracts business logic behind a clear, injectable contract, promoting separation of concerns and testability.
 
