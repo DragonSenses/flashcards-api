@@ -436,6 +436,39 @@ And can be caught at the controller level or handled globally via a `RestControl
 - 📤 **REST compliance**: Supports clean HTTP status mapping (e.g., 404 for not found, 400 for bad request, 409 for conflict).
 - 🛡️ **Extensible structure**: Future additions (e.g., `UnauthorizedException`) can plug into the same package and handling mechanism.
 
+# ✅ Validation Utility Overview
+
+The application uses a centralized validation helper class, `ValidatingService`, to streamline null checks, field validation, and throw semantic exceptions when inputs fail integrity rules.
+
+This utility resides in:
+
+```
+com.ken.flashcards.service.ValidatingService
+```
+
+It is extended by service implementations (e.g., `FlashcardServiceImpl`) to ensure all service-level input handling remains consistent, modular, and readable.
+
+---
+
+### 📘 Methods
+
+| Method                               | Purpose                                       |
+|--------------------------------------|-----------------------------------------------|
+| `assertNotNull(Object obj)`          | Validates that an input object is non-null    |
+| `assertNotBlank(String value, name)` | Validates that a field string is not blank    |
+
+These methods throw appropriate exceptions (e.g., `BadRequestException`) when validation fails, which are later translated to HTTP 400 responses by a global exception handler.
+
+---
+
+## 🧠 Design Notes
+
+- 🧩 **Cross-service consistency**: All service implementations share uniform input checks
+- 🔁 **Exception-driven flow**: Failures are surfaced via custom exceptions rather than silent failure or null returns
+- 🛡️ **Extensible base class**: Future validation methods (e.g., `assertIdFormat`, `assertEmailPattern`) can be added without affecting service signatures
+- 🧪 **Isolated testability**: Validation logic is decoupled and can be unit-tested independently from service orchestration
+- 📦 **Layer-fit placement**: Although functionally a utility, it’s scoped under `service` to reflect its direct role in service-layer input hygiene
+
 # 🛎️ Service Interface Overview
 
 The `FlashcardService` interface defines application-level operations for managing `Flashcard` resources. It abstracts business logic behind a clear, injectable contract, promoting separation of concerns and testability.
