@@ -815,3 +815,47 @@ Produces output like:
 - 🛠️ **Spring-specific targeting**: Focuses specifically on `MethodArgumentNotValidException`, making it safe and predictable
 - 🧪 **Evolvable formatting**: Could be extended to include field names or error codes if desired
 
+---
+
+# 📦 Controller Layer Overview
+
+The controller layer serves as the external interface of the API, exposing REST endpoints that delegate business logic to service classes. Each controller is tightly scoped to a domain — categories, study sessions, and flashcards — and communicates directly with clients via HTTP.
+
+---
+
+## 🧩 Role of Controllers
+
+- Accept JSON payloads and query parameters from HTTP requests
+- Delegate logic to injected service interfaces
+- Return standardized `ResponseEntity` objects via `ResponseHandler`
+- Handle RESTful actions (CRUD, filtering) using clear, semantic routes
+- Rely on `GlobalExceptionHandler` for error management (no try-catch clutter)
+
+---
+
+## 🗂 Controller Classes
+
+| Controller Class           | Path Prefix        | Key Endpoints                                |
+|----------------------------|--------------------|----------------------------------------------|
+| `CategoryController`       | `/categories`      | `GET`, `POST`, `DELETE`, `GET /{id}`         |
+| `StudySessionController`   | `/sessions`        | `GET`, `POST`, `DELETE`, `GET /category/{id}`|
+| `FlashcardController`      | `/flashcards`      | `GET`, `POST`, `DELETE`, `GET /session/{id}` |
+
+All classes implement the shared `ResponseHandler` interface to return clean and consistent responses.
+
+---
+
+## 🔧 Design Highlights
+
+- 📦 **Constructor-based injection**: Promotes testability and clean dependency management
+- 📤 **Thin controller logic**: All business rules are handled in service layer
+- 📜 **RESTful conventions**: URL structure and HTTP methods follow standard REST design
+- 📘 **DTO usage**: Input models (`CategoryRequest`, `StudySessionRequest`, `FlashcardRequest`) are decoupled from domain entities
+
+---
+
+## 🛡️ Error Handling Integration
+
+- All controller classes remain agnostic to exception handling
+- Exceptions thrown (e.g. `NotFoundException`, `ConflictException`) are intercepted by `GlobalExceptionHandler`
+- Validation errors (from `@RequestBody`) are handled via `ValidationErrorExtractor`
