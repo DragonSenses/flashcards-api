@@ -686,3 +686,132 @@ public class FlashcardServiceImpl extends ValidatingService implements Flashcard
 - **Defensive logic via `studySessionService.assertExistsById()`** — ✔️ pre-checks across layers
 - **Immutable flow** — ✔️ avoids side effects; service remains stateless
 
+---
+
+# 🚨 Error-Handling Architecture Overview
+
+The error-handling system in the Flashcards API centralizes exception processing, response formatting, and validation error transformation. It ensures consistent REST responses for both custom exceptions and validation failures.
+
+All error-handling components reside in:
+
+```
+com.ken.flashcards.error
+```
+
+---
+
+### 🧩 Key Components
+
+| Component                     | Role                                                                 |
+|------------------------------|----------------------------------------------------------------------|
+| `GlobalExceptionHandler`     | Intercepts uncaught exceptions and maps them to REST responses       |
+| `ResponseHandler`            | Interface providing helper methods for building standardized responses |
+| `ValidationErrorExtractor`   | Transforms `MethodArgumentNotValidException` into readable error lists |
+| `ErrorResponse`              | Structured payload representing simple error messages                 |
+
+---
+
+### 🔧 Error Response Flow
+
+#### 1. **Service Layer Throws Exceptions**
+- `NotFoundException`, `ConflictException`, `BadRequestException`
+- Thrown when resources are missing, duplicated, or invalid
+
+#### 2. **GlobalExceptionHandler Catches Them**
+- Annotated with `@ControllerAdvice` and `@ExceptionHandler`
+- Converts exceptions into `ErrorResponse` or validation maps
+
+#### 3. **ValidationErrorExtractor Handles DTO Validation Errors**
+- Used in `GlobalExceptionHandler`
+- Extracts field-level messages from `MethodArgumentNotValidException`
+
+#### 4. **ResponseHandler Builds ResponseEntities**
+- Used when creating HTTP 201 responses or handling other status codes
+- Utility interface shared across controller or advice layers
+
+---
+
+### 📘 Sample Output Structures
+
+- **Custom Exception Response**
+```json
+{
+  "error": "Cannot find flashcard with id = xyz"
+}
+```
+
+- **Validation Error Response**
+```json
+{
+  "errors": [
+    "Session name must not be blank",
+    "Category ID is required"
+  ]
+}
+```
+
+---
+
+## 🧠 Design Notes
+
+- 🧩 **Separation of concerns**: Each class handles a specific aspect of error flow
+- 📤 **REST compliance**: Returns appropriate HTTP status codes (e.g., 400, 404, 409)
+- 🛡️ **Safe and predictable**: Ensures all errors produce consistent, consumable output
+- 🧪 **Testable**: Each layer (e.g., extractor, handler) can be independently unit-tested
+
+## 🧪 Validation Error Extraction Overview
+
+To handle client-side validation failures (e.g. form submission with missing or malformed fields), the application includes a specialized class for extracting readable error messages from exceptions triggered during binding.
+
+This utility resides in:
+
+```
+com.ken.flashcards.error.ValidationErrorExtractor
+```
+
+It is used by the `GlobalExceptionHandler` to intercept `MethodArgumentNotValidException` and generate structured output for response payloads.
+
+---
+
+### 📘 Class Purpose
+
+- Converts `FieldError` entries into user-friendly messages
+- Aggregates validation issues into a simple `Map<String, List<String>>` structure
+- Enables consistent formatting for 400 responses tied to invalid `@Valid` DTOs
+
+---
+
+### 🔧 Usage Example
+
+In `GlobalExceptionHandler`:
+
+```java
+@ExceptionHandler(MethodArgumentNotValidException.class)
+@ResponseStatus(BAD_REQUEST)
+@ResponseBody
+Map<String, List<String>> handle(MethodArgumentNotValidException exception) {
+  var errorsExtractor = new ValidationErrorExtractor();
+  return errorsExtractor.extractErrorsFrom(exception);
+}
+```
+
+Produces output like:
+
+```json
+{
+  "errors": [
+    "Category name must not be blank",
+    "Session ID is required"
+  ]
+}
+```
+
+---
+
+## 🧠 Design Notes
+
+- 📤 **REST-friendly output**: Returns a format easily consumable by frontend clients
+- 🧩 **Separation of concerns**: Keeps formatting logic decoupled from error handler wiring
+- 🛠️ **Spring-specific targeting**: Focuses specifically on `MethodArgumentNotValidException`, making it safe and predictable
+- 🧪 **Evolvable formatting**: Could be extended to include field names or error codes if desired
+
