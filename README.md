@@ -30,14 +30,16 @@ Entities
 [ HTTP Response to Client ]
 ```
 
-Error Handling
-```
-[ MethodArgumentNotValidException ]
-      ↓ uses
-[ MethodArgumentNotValidExceptionMapper ]
-      ↓ returns
-[ Map<String, List<String>> ]
-```
+### Error Handling Flow
+
+The diagram below illustrates how exceptions propagate through the service layer and are transformed into structured HTTP responses:
+
+![Error Handling Diagram](docs/error-handling.svg)
+
+- Custom exceptions (`NotFoundException`, `ConflictException`, `BadRequestException`) are thrown from services.
+- `GlobalExceptionHandler` intercepts these using `@ControllerAdvice` and maps them to `ErrorResponse`.
+- Validation failures (`MethodArgumentNotValidException`) are transformed via `ValidationErrorExtractor` into a standardized payload.
+- All errors are returned to the client as structured JSON with appropriate HTTP status codes.
 
 # Technologies:
 Java 17, Spring Boot, Spring MVC, Spring JPA, Spring Web

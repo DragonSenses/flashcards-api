@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Error Handling Flow">
+    <mxGraphModel dx="1072" dy="620" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Service Layer -->
+        <mxCell id="svc" value="Service Layer" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="100" y="40" width="180" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Exceptions Thrown -->
+        <mxCell id="exc" value="Throws Exception&#xa;(NotFound / Conflict / BadRequest)" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="100" y="110" width="220" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- GlobalExceptionHandler -->
+        <mxCell id="handler" value="@ControllerAdvice&#xa;GlobalExceptionHandler" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="100" y="200" width="220" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ErrorResponse -->
+        <mxCell id="resp" value="ErrorResponse&#xa;{ error: &quot;...&quot; }" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="100" y="290" width="220" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Client Response -->
+        <mxCell id="client" value="HTTP Response to Client" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="100" y="380" width="220" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="a1" style="endArrow=block;" edge="1" parent="1" source="svc" target="exc"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a2" style="endArrow=block;" edge="1" parent="1" source="exc" target="handler"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a3" style="endArrow=block;" edge="1" parent="1" source="handler" target="resp"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a4" style="endArrow=block;" edge="1" parent="1" source="resp" target="client"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Validation Flow -->
+        <mxCell id="valExc" value="MethodArgumentNotValidException" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="420" y="110" width="240" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="valMap" value="Mapped by&#xa;ValidationErrorExtractor" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="420" y="190" width="240" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="valResp" value="Validation Error Payload&#xa;{ errors: [ ... ] }" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="420" y="270" width="240" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="valArrow1" style="endArrow=block;" edge="1" parent="1" source="valExc" target="valMap"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="valArrow2" style="endArrow=block;" edge="1" parent="1" source="valMap" target="valResp"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="valArrow3" style="endArrow=block;" edge="1" parent="1" source="valResp" target="client"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
