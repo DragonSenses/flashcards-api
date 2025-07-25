@@ -53,6 +53,18 @@ public class CategoryController implements ResponseHandler {
     return response(categoryService.findById(id), org.springframework.http.HttpStatus.OK);
   }
 
+  @Operation(summary = "GET a category by its name")
+  @ApiResponse(responseCode = "200", description = "Category found",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = Category.class)))
+  @ApiResponse(responseCode = "404", description = "Category not found",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ErrorResponse.class)))
+  @GetMapping("/details")
+  public ResponseEntity<Category> findByName(@RequestParam String name) {
+    return ResponseEntity.ok(categoryService.findByName(name));
+  }
+
   @Operation(summary = "Create a category")
   @ApiResponse(responseCode = "201", description = "Category created",
       content = @Content(mediaType = "application/json",
