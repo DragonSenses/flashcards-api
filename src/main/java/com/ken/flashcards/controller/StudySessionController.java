@@ -38,7 +38,7 @@ public class StudySessionController implements ResponseHandler {
   }
 
   @PostMapping
-  public ResponseEntity<StudySession> create(@RequestBody StudySessionRequest request) {
+  public ResponseEntity<StudySession> createStudySession(@RequestBody StudySessionRequest request) {
     StudySession session = studySessionService.createStudySession(request);
     return created(session);
   }
