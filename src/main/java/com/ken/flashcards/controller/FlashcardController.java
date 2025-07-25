@@ -1,6 +1,7 @@
 package com.ken.flashcards.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +17,19 @@ import com.ken.flashcards.error.ResponseHandler;
 import com.ken.flashcards.model.Flashcard;
 import com.ken.flashcards.service.FlashcardService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/flashcards")
+@Tag(name = "Flashcard", description = "Operations related to flashcard resources")
 public class FlashcardController implements ResponseHandler {
 
   private final FlashcardService flashcardService;
@@ -29,27 +39,64 @@ public class FlashcardController implements ResponseHandler {
     this.flashcardService = flashcardService;
   }
 
+  @Operation(summary = "Get all flashcards")
+  @ApiResponse(responseCode = "200", description = "Retrieved all flashcards",
+      content = @Content(mediaType = "application/json",
+          array = @ArraySchema(schema = @Schema(implementation = Flashcard.class))))
   @GetMapping
   public ResponseEntity<Iterable<Flashcard>> findAll() {
-    return response(flashcardService.findAll(), org.springframework.http.HttpStatus.OK);
+    return response(flashcardService.findAll(), HttpStatus.OK);
   }
 
+  @Operation(summary = "Find flashcard by ID")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Flashcard found",
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Flashcard.class))),
+    @ApiResponse(responseCode = "404", description = "Flashcard not found")
+  })
   @GetMapping("/{id}")
   public ResponseEntity<Flashcard> findById(@PathVariable String id) {
-    return response(flashcardService.findById(id), org.springframework.http.HttpStatus.OK);
+    return response(flashcardService.findById(id), HttpStatus.OK);
   }
 
+  @Operation(summary = "Get all flashcards by study session ID",
+      parameters = @Parameter(name = "studySessionId", description = "ID of the study session", required = true))
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Flashcards retrieved by session",
+        content = @Content(mediaType = "application/json",
+            array = @ArraySchema(schema = @Schema(implementation = Flashcard.class)))),
+    @ApiResponse(responseCode = "404", description = "Study session not found",
+        content = @Content(mediaType = "application/json"))
+  })
   @GetMapping("/session/{studySessionId}")
   public ResponseEntity<Iterable<Flashcard>> findBySession(@PathVariable String studySessionId) {
-    return response(flashcardService.findAllByStudySessionId(studySessionId), org.springframework.http.HttpStatus.OK);
+    return response(flashcardService.findAllByStudySessionId(studySessionId), HttpStatus.OK);
   }
 
+  @Operation(summary = "Create a flashcard")
+  @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Flashcard created",
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Flashcard.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid request data"),
+    @ApiResponse( responseCode = "404", description = "Study session not found")
+  })
   @PostMapping
   public ResponseEntity<Flashcard> createFlashcard(@RequestBody FlashcardRequest request) {
     Flashcard flashcard = flashcardService.createFlashcard(request);
     return created(flashcard);
   }
 
+  @Operation(summary = "Update or create a flashcard")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Flashcard updated",
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Flashcard.class))),
+    @ApiResponse(responseCode = "201", description = "Flashcard created"),
+    @ApiResponse(responseCode = "400", description = "Invalid flashcard data"),
+    @ApiResponse( responseCode = "404", description = "Study session not found")
+  })
   @PutMapping
   public ResponseEntity<Flashcard> update(@Valid @RequestBody Flashcard flashcard) {
     return existsById(flashcard.getId())
@@ -57,6 +104,11 @@ public class FlashcardController implements ResponseHandler {
         : created(save(flashcard));
   }
 
+  @Operation(summary = "Delete a flashcard by ID")
+  @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Flashcard deleted"),
+    @ApiResponse(responseCode = "404", description = "Flashcard not found")
+  })
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable String id) {
     flashcardService.deleteById(id);
