@@ -28,42 +28,78 @@ The diagram below illustrates how exceptions propagate through the service layer
 - All errors are returned to the client as structured JSON with appropriate HTTP status codes.
 
 # Technologies:
-Java 17, Spring Boot, Spring MVC, Spring JPA, Spring Web
+
+- **Language & Runtime:** Java 17
+- **Frameworks:** Spring Boot, Spring MVC, Spring Data JPA, Spring Web
+- **Data Persistence:** MySQL
+- **Documentation:** SpringDoc OpenAPI, Swagger UI
+- **Build Tool:** Maven
 
 # Prerequisites
-1) JDK / Java 17
-2) MySQL
+1. Java 17+ (JDK installed and available in PATH)  
+2. MySQL Server running locally with default port (3306) 
 
 # Specifications
 
-- User can **create**, **read**, **update** and **delete** *Categories*.
-- User can **create**, **read**, **update** and **delete** *Study Sessions*.
-- User can **create**, **read**, **update** and **delete** *Flashcards*.
+- Users can **create**, **read**, **update**, and **delete** *Categories* via REST endpoints.
+- Users can **manage** *Study Sessions* tied to specific categories.
+- Users can **create**, **search**, and **delete** *Flashcards* linked to study sessions.
 
-# Instructions to run locally
+- **Category Management:**  
+  - `GET /api/v1/categories`  
+  - `POST /api/v1/categories`  
+  - `PUT /api/v1/categories`  
+  - `DELETE /api/v1/categories/{id}`
 
-1. Clone this repo (or download zip on GitHub).
-2. Go to the directory the files are located.
-3. Create the MySQL schema manually:
+- **Study Session Management:**  
+  - CRUD + `GET /sessions/category/{categoryId}`
 
-```sql
-CREATE DATABASE flashcards;
-```
+- **Flashcard Operations:**  
+  - CRUD + `GET /flashcards/session/{studySessionId}`
 
-1) Inside the folder `src/resources/application.yml` file change the properties in datasource to match your local MySQL credentials for `username` and `password`: 
-`spring.datasource.username` and `spring.datasource.password`
+Absolutely — here's a refined and more consistent version of your **Instructions to run locally** section, with clarity, formatting consistency, and a touch of polish:
 
-```application.yml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/flashcards
-    username: yourUsername
-    password: yourPassword
-```
+# Instructions to Run Locally
 
-4) Run the application
-5) After running the application, test it manually with this tool in the following path:
+1. **Clone the repository** (or download ZIP from GitHub)
 
-```sh
-http://localhost:8080/swagger-ui/index.html
-```
+   ```sh
+   git clone https://github.com/your-username/flashcards-api.git
+   cd flashcards-api
+   ```
+
+2. **Create the MySQL schema manually**
+
+   Ensure MySQL is running locally, then execute:
+
+   ```sql
+   CREATE DATABASE flashcards;
+   ```
+
+3. **Configure database credentials**
+
+   Update `src/resources/application.yml` to match your local MySQL settings:
+
+   ```yaml
+   spring:
+     datasource:
+       url: jdbc:mysql://localhost:3306/flashcards
+       username: yourUsername
+       password: yourPassword
+   ```
+
+4. **Run the application**
+
+   Use Maven wrapper (or your IDE):
+
+   ```sh
+   ./mvnw spring-boot:run
+   ```
+
+5. **Test the API manually**
+
+   Once running, visit the Swagger UI for interactive documentation:
+
+   ```
+   http://localhost:8080/swagger-ui/index.html
+   ```
