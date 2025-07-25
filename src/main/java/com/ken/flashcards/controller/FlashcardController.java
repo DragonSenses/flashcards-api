@@ -16,7 +16,7 @@ import com.ken.flashcards.model.Flashcard;
 import com.ken.flashcards.service.FlashcardService;
 
 @RestController
-@RequestMapping("/flashcards")
+@RequestMapping("/api/v1/flashcards")
 public class FlashcardController implements ResponseHandler {
 
   private final FlashcardService flashcardService;
