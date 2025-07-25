@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ken.flashcards.dto.StudySessionRequest;
@@ -20,6 +21,7 @@ import com.ken.flashcards.model.StudySession;
 import com.ken.flashcards.service.StudySessionService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -75,16 +77,19 @@ public class StudySessionController implements ResponseHandler {
     return response(studySessionService.findById(id), HttpStatus.OK);
   }
 
-  @Operation(summary = "Find study sessions by category ID")
-  @ApiResponse(responseCode = "200", description = "List of study sessions by category",
-      content = {@Content(mediaType = "application/json",
-          array = @ArraySchema(schema = @Schema(implementation = StudySession.class)))})
-  @ApiResponse(responseCode = "404", description = "Study sessions not found",
-      content = {@Content(mediaType = "application/json",
-          schema = @Schema(implementation = ErrorResponse.class))})
-  @GetMapping("/category/{categoryId}")
-  public ResponseEntity<Iterable<StudySession>> findByCategory(@PathVariable String categoryId) {
-    return response(studySessionService.findAllByCategoryId(categoryId), HttpStatus.OK);
+  @Operation(summary = "Find study sessions by category ID",
+      parameters = {
+          @Parameter(name = "categoryId", description = "ID of the category", required = true)})
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "List of study sessions by category",
+          content = @Content(mediaType = "application/json",
+              array = @ArraySchema(schema = @Schema(implementation = StudySession.class)))),
+      @ApiResponse(responseCode = "404", description = "Study sessions not found",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class)))})
+  @GetMapping("/details")
+  public ResponseEntity<Iterable<StudySession>> findByCategory(@RequestParam String categoryId) {
+    return ok(studySessionService.findAllByCategoryId(categoryId));
   }
 
   @Operation(summary = "Create a new study session")
