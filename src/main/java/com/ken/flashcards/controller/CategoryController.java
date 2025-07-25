@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -67,5 +68,38 @@ public class CategoryController implements ResponseHandler {
   public ResponseEntity<Void> delete(@PathVariable String id) {
     categoryService.deleteById(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping
+  @Operation(summary = "Create a category")
+  @ApiResponse(responseCode = "201", description = "Category created",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = Category.class)))
+  @ApiResponse(responseCode = "400", description = "Invalid request body",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ErrorResponse.class)))
+  @ApiResponse(responseCode = "409", description = "Category already exists",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ErrorResponse.class)))
+  public ResponseEntity<Category> createCategory(@Valid @RequestBody CategoryRequest request) {
+    return created(categoryService.createCategory(request));
+  }
+
+  @PutMapping
+  @Operation(summary = "Update a category")
+  @ApiResponse(responseCode = "200", description = "Category updated",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = Category.class)))
+  @ApiResponse(responseCode = "201", description = "New category created",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = Category.class)))
+  @ApiResponse(responseCode = "400", description = "Invalid request body",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ErrorResponse.class)))
+  @ApiResponse(responseCode = "409", description = "Duplicate category name",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ErrorResponse.class)))
+  public ResponseEntity<Category> update(@Valid @RequestBody Category category) {
+    return existsById(category.getId()) ? ok(save(category)) : created(save(category));
   }
 }
