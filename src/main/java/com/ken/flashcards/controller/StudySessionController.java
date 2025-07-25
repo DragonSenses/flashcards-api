@@ -12,7 +12,7 @@ import com.ken.flashcards.error.ResponseHandler;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/sessions")
+@RequestMapping("/api/v1/sessions")
 public class StudySessionController implements ResponseHandler {
 
   private final StudySessionService studySessionService;
