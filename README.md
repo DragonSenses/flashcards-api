@@ -3,32 +3,18 @@ A modular and well-documented RESTful backend for managing flashcard-based study
 
 # High Level Architecture
 
-**Layers**
-- Client / Swagger UI
-- Controller Layer
-- Service Layer
-- Mapper & DTO
-- Repository Layer
-- MySQL Database
+### **Layers**
 
-Entities
-[ Category ]
-     ↓ categoryId
-[ StudySession ]
-     ↓ studySessionId
-[ Flashcard ]
+![high-level-architecture diagram](docs/high-level-architecture.svg)
 
-```
-[ Service Layer ]
-      ↓ throws
-[ NotFoundException / ConflictException / BadRequestException ]
-      ↓ captured by
-[ ApiExceptionHandler (@ControllerAdvice) ]
-      ↓ mapped to
-[ ErrorResponse ]
-      ↓ returned as
-[ HTTP Response to Client ]
-```
+This diagram represents a clean **separation of concerns** across the backend architecture:
+
+- **Client / Swagger UI**: Initiates HTTP requests and interacts with documented API endpoints
+- **Controller Layer**: Accepts HTTP requests and coordinates interaction with services
+- **Service Layer**: Encapsulates business logic, including validation and exception generation
+- **DTOs & Mappers**: Facilitate data transformation between domain entities and API contracts
+- **Repository Layer**: Interfaces with persistent storage (e.g., JPA repositories for `Category`)
+- **MySQL Database**: Stores and retrieves persistent data in structured relational format
 
 ### Error Handling Flow
 
