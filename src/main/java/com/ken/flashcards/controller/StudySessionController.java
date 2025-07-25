@@ -43,10 +43,23 @@ public class StudySessionController implements ResponseHandler {
     return created(session);
   }
 
+  @PutMapping
+  public ResponseEntity<StudySession> update(@Valid @RequestBody StudySession studySession) {
+    return existsById(studySession.getId()) ? ResponseEntity.ok(save(studySession)) : created(save(studySession));
+  }
+
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable String id) {
     studySessionService.deleteById(id);
     return ResponseEntity.noContent().build();
+  }
+
+  private boolean existsById(String id) {
+    return studySessionService.existsById(id);
+  }
+
+  private StudySession save(StudySession studySession) {
+    return studySessionService.save(studySession);
   }
 
 }
