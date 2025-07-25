@@ -859,3 +859,68 @@ All classes implement the shared `ResponseHandler` interface to return clean and
 - All controller classes remain agnostic to exception handling
 - Exceptions thrown (e.g. `NotFoundException`, `ConflictException`) are intercepted by `GlobalExceptionHandler`
 - Validation errors (from `@RequestBody`) are handled via `ValidationErrorExtractor`
+
+---
+
+# 🧭 Architectural Decision: `CategoryController` Design and Documentation
+
+### 📌 Context
+The `CategoryController` exposes a RESTful interface for managing `Category` entities. Early iterations focused on basic CRUD operations with minimal decoration. However, the controller has undergone systematic refinements to improve code clarity, response consistency, and documentation for external consumers.
+
+### 🪜 Design Evolution
+
+#### ✅ 1. Response Handling Simplification
+Original implementations used explicit `ResponseEntity` constructors:
+```java
+return new ResponseEntity<>(data, HttpStatus.OK);
+```
+Refactored to the static `ok()` method for cleaner expression:
+```java
+return ResponseEntity.ok(data);
+```
+This pattern improves readability and aligns with idiomatic Spring usage.
+
+#### ✅ 2. Interface Generalization
+Switched from:
+```java
+Collection<Category>
+```
+to:
+```java
+Iterable<Category>
+```
+This change broadens compatibility with reactive and lazy data sources while preserving semantic clarity.
+
+#### ✅ 3. Logic Extraction
+Redundant service interactions within `update()` (e.g., `save()`, `existsById()`) were extracted into private utilities. This reduces cognitive load, enforces single-responsibility, and improves testability.
+
+#### ✅ 4. Enhanced OpenAPI/Swagger Integration
+Each controller method now includes precise `@ApiResponse` annotations:
+- `responseCode` and `description` added across methods.
+- Content negotiation specified via `mediaType = "application/json"`.
+- Response body schema declared using `@Schema(implementation = Category.class)` for single objects and `@ArraySchema(...)` for collections.
+
+#### ✅ 5. Defensive Error Documentation
+The `DELETE /{id}` endpoint previously documented only success (`204 No Content`). It now includes:
+```java
+@ApiResponse(
+  responseCode = "404",
+  description = "Category does not exist",
+  content = @Content(
+    mediaType = "application/json",
+    schema = @Schema(implementation = ErrorResponse.class)
+  )
+)
+```
+This explicitly documents failure states, empowering consumers with accurate error expectations and schema contracts.
+
+### 📐 Outcome
+These incremental changes reflect a commitment to robust API architecture:
+- Controller methods remain clean and focused.
+- Response behavior is predictable and semantically aligned with HTTP status codes.
+- OpenAPI metadata accurately reflects system behavior, enabling powerful generated docs and smooth client integrations.
+
+### 🧠 Lessons Learned
+- Even small ergonomic changes (`ok()` vs `new ResponseEntity`) compound over time for cleaner code.
+- Swagger annotations aren’t just for decoration — they represent a public contract and should be treated with the same rigor as method logic.
+- Capturing design rationale in ADR form helps preserve decision lineage and serves as a reference for future team members.
