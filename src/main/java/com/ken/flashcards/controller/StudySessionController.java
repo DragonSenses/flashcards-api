@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ken.flashcards.dto.StudySessionRequest;
+import com.ken.flashcards.error.ErrorResponse;
 import com.ken.flashcards.error.ResponseHandler;
 import com.ken.flashcards.model.StudySession;
 import com.ken.flashcards.service.StudySessionService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,31 +41,63 @@ public class StudySessionController implements ResponseHandler {
   }
 
   @Operation(summary = "Get all study sessions")
-  @ApiResponse(responseCode = "200", description = "List of all study sessions")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "List of all study sessions",
+          content = @Content(mediaType = "application/json",
+              array = @ArraySchema(schema = @Schema(implementation = StudySession.class)))),
+      @ApiResponse(responseCode = "400", description = "Bad request",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized access",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "403", description = "Forbidden",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "500", description = "Internal server error",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class)))})
   @GetMapping
   public ResponseEntity<Iterable<StudySession>> findAll() {
     return ok(studySessionService.findAll());
   }
 
   @Operation(summary = "Find a study session by ID")
-  @ApiResponses({@ApiResponse(responseCode = "200", description = "Study session found"),
-      @ApiResponse(responseCode = "404", description = "Study session not found")})
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Study session found",
+          content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = StudySession.class))}),
+      @ApiResponse(responseCode = "404", description = "Study session not found",
+          content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))})})
   @GetMapping("/{id}")
   public ResponseEntity<StudySession> findById(@PathVariable String id) {
     return response(studySessionService.findById(id), HttpStatus.OK);
   }
 
   @Operation(summary = "Find study sessions by category ID")
-  @ApiResponse(responseCode = "200", description = "List of study sessions by category")
+  @ApiResponse(responseCode = "200", description = "List of study sessions by category",
+      content = {@Content(mediaType = "application/json",
+          array = @ArraySchema(schema = @Schema(implementation = StudySession.class)))})
+  @ApiResponse(responseCode = "404", description = "Study sessions not found",
+      content = {@Content(mediaType = "application/json",
+          schema = @Schema(implementation = ErrorResponse.class))})
   @GetMapping("/category/{categoryId}")
   public ResponseEntity<Iterable<StudySession>> findByCategory(@PathVariable String categoryId) {
     return response(studySessionService.findAllByCategoryId(categoryId), HttpStatus.OK);
   }
 
   @Operation(summary = "Create a new study session")
-  @ApiResponses({@ApiResponse(responseCode = "201", description = "Study session created"),
-      @ApiResponse(responseCode = "400", description = "Invalid input"),
-      @ApiResponse(responseCode = "404", description ="Study session not found")})
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Study session created",
+          content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = StudySession.class))}),
+      @ApiResponse(responseCode = "400", description = "Invalid input",
+          content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))}),
+      @ApiResponse(responseCode = "404", description = "Study session not found",
+          content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))})})
   @PostMapping
   public ResponseEntity<StudySession> createStudySession(@RequestBody StudySessionRequest request) {
     StudySession session = studySessionService.createStudySession(request);
@@ -69,19 +105,31 @@ public class StudySessionController implements ResponseHandler {
   }
 
   @Operation(summary = "Upsert a study session")
-  @ApiResponses({@ApiResponse(responseCode = "200", description = "Study session updated"),
-      @ApiResponse(responseCode = "201", description = "Study session created"),
-      @ApiResponse(responseCode = "400", description = "Invalid input"),
-      @ApiResponse(responseCode = "404", description = "Study session not found")})
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Study session updated",
+          content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = StudySession.class))}),
+      @ApiResponse(responseCode = "201", description = "Study session created",
+          content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = StudySession.class))}),
+      @ApiResponse(responseCode = "400", description = "Invalid input",
+          content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))}),
+      @ApiResponse(responseCode = "404", description = "Study session not found",
+          content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))})})
   @PutMapping
   public ResponseEntity<StudySession> update(@Valid @RequestBody StudySession studySession) {
-    return existsById(studySession.getId()) ? ResponseEntity.ok(save(studySession))
-        : created(save(studySession));
+    return existsById(studySession.getId()) ? ok(save(studySession)) : created(save(studySession));
   }
 
   @Operation(summary = "Delete a study session by ID")
-  @ApiResponses({@ApiResponse(responseCode = "204", description = "Study session deleted"),
-      @ApiResponse(responseCode = "404", description = "Study session not found")})
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Study session deleted",
+          content = {@Content(mediaType = "application/json")}),
+      @ApiResponse(responseCode = "404", description = "Study session not found",
+          content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))})})
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable String id) {
     studySessionService.deleteById(id);
