@@ -12,7 +12,7 @@ import com.ken.flashcards.error.ResponseHandler;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/api/v1/categories")
 public class CategoryController implements ResponseHandler {
 
   private final CategoryService categoryService;
