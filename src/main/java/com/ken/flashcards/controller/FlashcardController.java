@@ -42,7 +42,7 @@ public class FlashcardController implements ResponseHandler {
   }
 
   @PostMapping
-  public ResponseEntity<Flashcard> create(@RequestBody FlashcardRequest request) {
+  public ResponseEntity<Flashcard> createFlashcard(@RequestBody FlashcardRequest request) {
     Flashcard flashcard = flashcardService.createFlashcard(request);
     return created(flashcard);
   }
