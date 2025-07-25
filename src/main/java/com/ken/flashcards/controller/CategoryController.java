@@ -83,6 +83,9 @@ public class CategoryController implements ResponseHandler {
 
   @Operation(summary = "Delete a category by ID")
   @ApiResponse(responseCode = "204", description = "Category deleted")
+  @ApiResponse(responseCode = "404", description = "Category does not exist",
+      content = {@Content(mediaType = "application/json",
+          schema = @Schema(implementation = ErrorResponse.class))})
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable String id) {
     categoryService.deleteById(id);
