@@ -1,21 +1,28 @@
 package com.ken.flashcards.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import static org.springframework.http.ResponseEntity.ok;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ken.flashcards.dto.StudySessionRequest;
+import com.ken.flashcards.error.ResponseHandler;
 import com.ken.flashcards.model.StudySession;
 import com.ken.flashcards.service.StudySessionService;
-import com.ken.flashcards.error.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-
-import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/v1/sessions")
@@ -32,8 +39,8 @@ public class StudySessionController implements ResponseHandler {
   @Operation(summary = "Get all study sessions")
   @ApiResponse(responseCode = "200", description = "List of all study sessions")
   @GetMapping
-  public ResponseEntity<Collection<StudySession>> findAll() {
-    return response(studySessionService.findAll(), HttpStatus.OK);
+  public ResponseEntity<Iterable<StudySession>> findAll() {
+    return ok(studySessionService.findAll());
   }
 
   @Operation(summary = "Find a study session by ID")
