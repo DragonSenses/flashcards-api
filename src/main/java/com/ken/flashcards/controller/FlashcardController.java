@@ -72,7 +72,7 @@ public class FlashcardController implements ResponseHandler {
       @ApiResponse(responseCode = "404", description = "Study session not found",
           content = @Content(mediaType = "application/json",
               schema = @Schema(implementation = ErrorResponse.class)))})
-  @GetMapping("/session/{studySessionId}")
+  @GetMapping("/details")
   public ResponseEntity<Iterable<Flashcard>> findBySession(@PathVariable String studySessionId) {
     return ok(flashcardService.findAllByStudySessionId(studySessionId));
   }
