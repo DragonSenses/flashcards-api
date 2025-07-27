@@ -51,28 +51,27 @@ public class FlashcardController implements ResponseHandler {
 
   @Operation(summary = "Find flashcard by ID")
   @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "Flashcard found",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = Flashcard.class))),
-    @ApiResponse(responseCode = "404", description = "Flashcard not found",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorResponse.class)))
-  })
+      @ApiResponse(responseCode = "200", description = "Flashcard found",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = Flashcard.class))),
+      @ApiResponse(responseCode = "404", description = "Flashcard not found",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class)))})
   @GetMapping("/{id}")
   public ResponseEntity<Flashcard> findById(@PathVariable String id) {
     return ok(flashcardService.findById(id));
   }
 
   @Operation(summary = "Get all flashcards by study session ID",
-      parameters = @Parameter(name = "studySessionId", description = "ID of the study session", required = true))
+      parameters = @Parameter(name = "studySessionId", description = "ID of the study session",
+          required = true))
   @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "Flashcards retrieved by session",
-        content = @Content(mediaType = "application/json",
-            array = @ArraySchema(schema = @Schema(implementation = Flashcard.class)))),
-    @ApiResponse(responseCode = "404", description = "Study session not found",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorResponse.class)))
-  })
+      @ApiResponse(responseCode = "200", description = "Flashcards retrieved by session",
+          content = @Content(mediaType = "application/json",
+              array = @ArraySchema(schema = @Schema(implementation = Flashcard.class)))),
+      @ApiResponse(responseCode = "404", description = "Study session not found",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class)))})
   @GetMapping("/session/{studySessionId}")
   public ResponseEntity<Iterable<Flashcard>> findBySession(@PathVariable String studySessionId) {
     return ok(flashcardService.findAllByStudySessionId(studySessionId));
@@ -80,16 +79,15 @@ public class FlashcardController implements ResponseHandler {
 
   @Operation(summary = "Create a flashcard")
   @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Flashcard created",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = Flashcard.class))),
-    @ApiResponse(responseCode = "400", description = "Invalid request data",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorResponse.class))),
-    @ApiResponse( responseCode = "404", description = "Study session not found",
+      @ApiResponse(responseCode = "201", description = "Flashcard created",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = Flashcard.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid request data",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "404", description = "Study session not found",
           content = {@Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorResponse.class))})
-  })
+              schema = @Schema(implementation = ErrorResponse.class))})})
   @PostMapping
   public ResponseEntity<Flashcard> createFlashcard(@RequestBody FlashcardRequest request) {
     Flashcard flashcard = flashcardService.createFlashcard(request);
@@ -98,33 +96,28 @@ public class FlashcardController implements ResponseHandler {
 
   @Operation(summary = "Update or create a flashcard")
   @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "Flashcard updated",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = Flashcard.class))),
-    @ApiResponse(responseCode = "201", description = "Flashcard created",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = Flashcard.class))),
-    @ApiResponse(responseCode = "400", description = "Invalid flashcard data",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorResponse.class))),
-    @ApiResponse( responseCode = "404", description = "Study session not found",
+      @ApiResponse(responseCode = "200", description = "Flashcard updated",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = Flashcard.class))),
+      @ApiResponse(responseCode = "201", description = "Flashcard created",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = Flashcard.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid flashcard data",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "404", description = "Study session not found",
           content = {@Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorResponse.class))})
-  })
+              schema = @Schema(implementation = ErrorResponse.class))})})
   @PutMapping
   public ResponseEntity<Flashcard> update(@Valid @RequestBody Flashcard flashcard) {
-    return existsById(flashcard.getId())
-        ? ok(save(flashcard))
-        : created(save(flashcard));
+    return existsById(flashcard.getId()) ? ok(save(flashcard)) : created(save(flashcard));
   }
 
   @Operation(summary = "Delete a flashcard by ID")
-  @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Flashcard deleted"),
-    @ApiResponse(responseCode = "404", description = "Flashcard not found",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorResponse.class)))
-  })
+  @ApiResponses({@ApiResponse(responseCode = "204", description = "Flashcard deleted"),
+      @ApiResponse(responseCode = "404", description = "Flashcard not found",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class)))})
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable String id) {
     flashcardService.deleteById(id);
