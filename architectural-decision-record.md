@@ -11,6 +11,15 @@ This document captures key architectural decisions made during the development o
 **Decision**: Adopt Spring Boot
 **Consequences**: Accelerated development cycle; convention over configuration
 
+---
+
+## ADR #002: Layered Architecture with DTOs and Service Classes
+**Date**: 2025-07-18
+**Status**: Accepted
+**Context**: Maintain separation of concerns
+**Decision**: Introduce DTOs, mappers, and service layer
+**Consequences**: Easier testing and modularity
+
 
 ## Development Approach
 
