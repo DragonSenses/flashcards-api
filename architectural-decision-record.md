@@ -1,12 +1,34 @@
-# Architectural Decision Record
+# Architectural Decision Log
 
-# flashcards-api
+This document captures key architectural decisions made during the development of the Flashcards API — a modular and well-documented RESTful backend for managing flashcard-based study sessions. Built with Java and Spring Boot, featuring OpenAPI documentation via Swagger UI.
 
-A modular and well-documented RESTful backend for managing flashcard-based study sessions. Built with Java, Spring Boot, Swagger UI.
+---
 
-## Development
+## Development Approach
 
-Model View Controller. This comprehensive document aims to guide the steps of development and ease onboarding. 
+This project adheres to the Model-View-Controller (MVC) design pattern:
+- **Model**: DTOs and domain models representing flashcards, study sessions, and user interactions.
+- **View**: Exposed through Swagger UI, serving as an interactive documentation layer.
+- **Controller**: RESTful endpoints that orchestrate business logic, validation, and exception handling.
+
+This ADR aims to formalize architectural choices and facilitate onboarding for future contributors.
+
+## Context
+
+The application serves study session tracking with a need for modularity, maintainability, and clear API boundaries. The primary goal is to support scalable feature additions like spaced repetition algorithms or real-time collaboration.
+
+## Decision
+
+Use Spring Boot for rapid REST API scaffolding, along with:
+- Swagger/OpenAPI for API documentation
+- DTO-mapper-service layering to isolate concerns
+- Custom exception handling for robust error management
+
+## Consequences
+
+- Rapid onboarding due to clear layer separation
+- Easier monitoring and debugging via structured logs
+- Simplified testing pipelines with mocks at service/controller boundaries
 
 ### Application Structure
 
