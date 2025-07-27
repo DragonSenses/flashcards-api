@@ -1231,7 +1231,7 @@ VALUES('7', '5', 'Who issued the Emancipation Proclamation?', 'Abraham Lincoln')
 # 🧪 Testing Overview
 
 ### Context
-Following the completion of core layers (Model, DTO, Mapper, Service, Controller, Global Exception Handling), the next phase involves establishing a reliable testing strategy to validate application logic, protect against regressions, and ensure robust behavior across endpoints.
+Following the completion of core layers (Model, DTO, Mapper, Service, Controller, Global Exception Handling), the next phase involves establishing a reliable testing strategy to validate business logic (Service), input/output mapping (Controller & Mapper), and persistence behavior (Repository).
 
 ### Decision
 We will implement both **unit tests** and **integration tests** using `JUnit 5`, `Mockito`, and Spring-specific annotations. This phase strengthens confidence in service logic, controller request handling, and data access behavior.
@@ -1255,12 +1255,12 @@ src/
 
 ### Test Strategy
 
-| Layer        | Annotation              | Focus                                   |
-|--------------|-------------------------|------------------------------------------|
-| Controller   | `@WebMvcTest` / `@SpringBootTest` | Route mapping, response structure, error propagation |
-| Service      | `@ExtendWith(MockitoExtension.class)` | Business logic and error flow |
-| Repository   | `@DataJpaTest`          | Query behavior and DB interactions |
-| Mapper       | Plain JUnit             | DTO conversion integrity |
+| Layer      | Test Scope                     | Key Annotations                         | Purpose                                              |
+|------------|--------------------------------|-----------------------------------------|------------------------------------------------------|
+| Controller | Integration / API surface      | `@WebMvcTest`, `@SpringBootTest`        | Route mapping, request/response, exception flow     |
+| Service    | Unit (mocked dependencies)     | `@ExtendWith(MockitoExtension.class)`   | Business logic, method delegation, edge cases       |
+| Repository | Data access layer              | `@DataJpaTest`                          | DB query validation, transactional behavior         |
+| Mapper     | Lightweight logic validation   | Plain JUnit                             | DTO ↔ entity conversion accuracy                    |
 
 ### Goals
 
@@ -1268,3 +1268,41 @@ src/
 - ✅ Validate controller endpoints for expected inputs, outputs, and error states
 - ✅ Verify repository queries interact predictably with real or in-memory DB layers
 - ✅ Test mappers for accurate transformation between DTOs and domain models
+
+# 🧪 Service Layer: Initial Test Implementation
+
+## 🛎️ CategoryServiceImpl
+
+#### Setup
+We begin by validating the `CategoryServiceImpl`, the concrete implementation of business logic for category-related operations. This testing effort focuses on ensuring correct delegation to the repository and expected data handling behaviors.
+
+Create the test class under the service package:
+
+```
+src/test/java/com/ken/flashcards/service/CategoryServiceImplTest.java
+```
+
+This class uses `JUnit 5` and `Mockito` annotations:
+
+- `@ExtendWith(MockitoExtension.class)` to enable Mockito in JUnit
+- `@Mock` for mocking dependencies like `CategoryRepository` and `CategoryMapper`
+- `@InjectMocks` to inject the service implementation into the test context
+
+#### First Unit Test: `findAll()`
+
+The first method we test is `findAll()`, which retrieves all categories sorted by name. This is a lightweight method, ideal for kicking off service layer validation.
+
+```java
+@Test
+void findsAllOrderedByName() {
+  when(categoryRepository.findAllByOrderByNameAsc()).thenReturn(categories);
+  assertEquals(categories, categoryService.findAll());
+  verify(categoryRepository, times(1)).findAllByOrderByNameAsc();
+}
+```
+
+This test verifies:
+
+- Correct method delegation to `categoryRepository`
+- Sorted data retrieval via `findAllByOrderByNameAsc()`
+- Consistency between mock output and service return value
