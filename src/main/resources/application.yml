@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/flashcards
+    username: 
+    password: 
+
+  sql:
+    init:
+      mode: always
+
+  servlet:
+    path:
+      base: /api/v1
+      categories: "${spring.servlet.path.base}/categories"
+      flashcards: "${spring.servlet.path.base}/flashcards"
+      study-sessions: "${spring.servlet.path.base}/study-sessions"
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework: INFO
+    com.ken.flashcards: DEBUG
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
