@@ -4,6 +4,14 @@ This document captures key architectural decisions made during the development o
 
 ---
 
+## ADR #001: Use Spring Boot as the Backend Framework
+**Date**: 2025-07-18
+**Status**: Accepted
+**Context**: Need for rapid API development with built-in dependency management
+**Decision**: Adopt Spring Boot
+**Consequences**: Accelerated development cycle; convention over configuration
+
+
 ## Development Approach
 
 This project adheres to the Model-View-Controller (MVC) design pattern:
