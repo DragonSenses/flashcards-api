@@ -1227,3 +1227,44 @@ VALUES('7', '5', 'Who issued the Emancipation Proclamation?', 'Abraham Lincoln')
 - **Cascading relationships** align with schema enforcement, enabling referential integrity during deletions/updates
 
 ---
+
+# 🧪 Testing Overview
+
+### Context
+Following the completion of core layers (Model, DTO, Mapper, Service, Controller, Global Exception Handling), the next phase involves establishing a reliable testing strategy to validate application logic, protect against regressions, and ensure robust behavior across endpoints.
+
+### Decision
+We will implement both **unit tests** and **integration tests** using `JUnit 5`, `Mockito`, and Spring-specific annotations. This phase strengthens confidence in service logic, controller request handling, and data access behavior.
+
+### Application Structure
+
+Create the following mirrored test package structure under `src/test/java/com/ken/flashcards/`:
+
+```
+src/
+├── test/
+│   └── java/
+│       └── com/
+│           └── ken/
+│               └── flashcards/
+│                   ├── controller        ← Integration & endpoint tests
+│                   ├── service           ← Unit tests with mocked repos
+│                   ├── repository        ← Data access layer tests (optional)
+│                   └── mapper            ← Logic validation tests (optional)
+```
+
+### Test Strategy
+
+| Layer        | Annotation              | Focus                                   |
+|--------------|-------------------------|------------------------------------------|
+| Controller   | `@WebMvcTest` / `@SpringBootTest` | Route mapping, response structure, error propagation |
+| Service      | `@ExtendWith(MockitoExtension.class)` | Business logic and error flow |
+| Repository   | `@DataJpaTest`          | Query behavior and DB interactions |
+| Mapper       | Plain JUnit             | DTO conversion integrity |
+
+### Goals
+
+- ✅ Ensure service methods correctly delegate, transform, and handle exceptions
+- ✅ Validate controller endpoints for expected inputs, outputs, and error states
+- ✅ Verify repository queries interact predictably with real or in-memory DB layers
+- ✅ Test mappers for accurate transformation between DTOs and domain models
