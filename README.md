@@ -1,5 +1,17 @@
 # flashcards-api
-A modular and well-documented RESTful backend for managing flashcard-based study sessions. Built with Java, Spring Boot, Swagger UI.
+A modular and well-documented RESTful backend for managing flashcard-based study sessions. Built with Java and Spring Boot, featuring OpenAPI documentation via Swagger UI.
+
+Work in Progress:
+- [x] DTO
+- [x] Mapper
+- [x] Repo
+- [x] Exception
+- [x] Service
+- [ ] Controller
+- [ ] 
+- [ ] Mock SQL Test Data
+- [ ] Unit Tests
+- [ ] Integration Tests
 
 # High Level Architecture
 
@@ -56,8 +68,6 @@ The diagram below illustrates how exceptions propagate through the service layer
 
 - **Flashcard Operations:**  
   - CRUD + `GET /flashcards/session/{studySessionId}`
-
-Absolutely — here's a refined and more consistent version of your **Instructions to run locally** section, with clarity, formatting consistency, and a touch of polish:
 
 # Instructions to Run Locally
 
