@@ -1,8 +1,8 @@
 package com.ken.flashcards.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import static org.springframework.http.ResponseEntity.ok;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +46,7 @@ public class FlashcardController implements ResponseHandler {
           array = @ArraySchema(schema = @Schema(implementation = Flashcard.class))))
   @GetMapping
   public ResponseEntity<Iterable<Flashcard>> findAll() {
-    return response(flashcardService.findAll(), HttpStatus.OK);
+    return ok(flashcardService.findAll());
   }
 
   @Operation(summary = "Find flashcard by ID")
@@ -60,7 +60,7 @@ public class FlashcardController implements ResponseHandler {
   })
   @GetMapping("/{id}")
   public ResponseEntity<Flashcard> findById(@PathVariable String id) {
-    return response(flashcardService.findById(id), HttpStatus.OK);
+    return ok(flashcardService.findById(id));
   }
 
   @Operation(summary = "Get all flashcards by study session ID",
@@ -75,7 +75,7 @@ public class FlashcardController implements ResponseHandler {
   })
   @GetMapping("/session/{studySessionId}")
   public ResponseEntity<Iterable<Flashcard>> findBySession(@PathVariable String studySessionId) {
-    return response(flashcardService.findAllByStudySessionId(studySessionId), HttpStatus.OK);
+    return ok(flashcardService.findAllByStudySessionId(studySessionId));
   }
 
   @Operation(summary = "Create a flashcard")
@@ -114,7 +114,7 @@ public class FlashcardController implements ResponseHandler {
   @PutMapping
   public ResponseEntity<Flashcard> update(@Valid @RequestBody Flashcard flashcard) {
     return existsById(flashcard.getId())
-        ? ResponseEntity.ok(save(flashcard))
+        ? ok(save(flashcard))
         : created(save(flashcard));
   }
 
