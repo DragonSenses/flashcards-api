@@ -1162,3 +1162,68 @@ CREATE TABLE flashcard (
 - Table naming aligns with controller paths and DTO structure
 
 ---
+
+# 🌱 Seed Data Overview
+
+Seed data is a predefined set of values used to populate the database during initial setup. It helps developers and testers work with meaningful content immediately—without needing to manually create records. In this context, it provides:
+- Categories to organize learning material
+- Study sessions grouped by topic
+- Flashcards containing relevant questions and answers
+
+This data mirrors real-world usage patterns and supports end-to-end API validation, UI rendering, and functional testing.
+
+## 📍 File Location
+
+```
+src/main/resources/data.sql
+```
+
+## 🧩 Role of `data.sql`
+
+This file initializes the database with curated sample data to support development, testing, and demonstration of key API features. It populates:
+- `category` tables with topical subjects
+- `study_session` entries that organize flashcards contextually
+- `flashcard` records containing Q&A pairs for study practice
+
+Designed for idempotent loading during application startup.
+
+## ✅ Implementation
+
+```sql
+-- Categories
+INSERT INTO category(id, name) VALUES('1', 'Art History');
+INSERT INTO category(id, name) VALUES('2', 'Thermodynamics');
+INSERT INTO category(id, name) VALUES('3', 'Computer Science');
+INSERT INTO category(id, name) VALUES('4', 'American History');
+
+-- Study Sessions
+INSERT INTO study_session(id, category_id, name) VALUES('1', '1', 'Northern Renaissance');
+INSERT INTO study_session(id, category_id, name) VALUES('2', '1', 'Renaissance');
+INSERT INTO study_session(id, category_id, name) VALUES('3', '2', 'Second Law of Thermodynamics');
+INSERT INTO study_session(id, category_id, name) VALUES('4', '3', 'Object Oriented Programming (OOP)');
+INSERT INTO study_session(id, category_id, name) VALUES('5', '4', 'Presidents');
+
+-- Flashcards
+INSERT INTO flashcard(id, study_session_id, question, answer)
+VALUES('1', '1', 'Who painted "The Garden of Earthly Delights"?', 'Hieronymus Bosch');
+INSERT INTO flashcard(id, study_session_id, question, answer)
+VALUES('2', '2', 'Who painted "The Last Supper"?', 'Leonardo da Vinci');
+INSERT INTO flashcard(id, study_session_id, question, answer)
+VALUES('3', '2', 'Who sculpted "David"?', 'Michelangelo');
+INSERT INTO flashcard(id, study_session_id, question, answer)
+VALUES('4', '3', 'What is a measure of disorder or randomness in a system?', 'Entropy');
+INSERT INTO flashcard(id, study_session_id, question, answer)
+VALUES('5', '4', 'What are three Object-Oriented Design Goals?', 'Adaptability, Reusability, Robustness');
+INSERT INTO flashcard(id, study_session_id, question, answer)
+VALUES('6', '4', 'What are three Object-Oriented Design Principles?', 'Abstraction, Encapsulation, Modularity');
+INSERT INTO flashcard(id, study_session_id, question, answer)
+VALUES('7', '5', 'Who issued the Emancipation Proclamation?', 'Abraham Lincoln');
+```
+
+## 💡 Design Insights
+
+- **Consistent ID conventions** eliminate key collisions across entities
+- **Modular structure** supports testability and easy expansion of study topics
+- **Cascading relationships** align with schema enforcement, enabling referential integrity during deletions/updates
+
+---
