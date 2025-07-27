@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ken.flashcards.dto.FlashcardRequest;
+import com.ken.flashcards.error.ErrorResponse;
 import com.ken.flashcards.error.ResponseHandler;
 import com.ken.flashcards.model.Flashcard;
 import com.ken.flashcards.service.FlashcardService;
@@ -53,7 +54,9 @@ public class FlashcardController implements ResponseHandler {
     @ApiResponse(responseCode = "200", description = "Flashcard found",
         content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = Flashcard.class))),
-    @ApiResponse(responseCode = "404", description = "Flashcard not found")
+    @ApiResponse(responseCode = "404", description = "Flashcard not found",
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorResponse.class)))
   })
   @GetMapping("/{id}")
   public ResponseEntity<Flashcard> findById(@PathVariable String id) {
@@ -67,7 +70,8 @@ public class FlashcardController implements ResponseHandler {
         content = @Content(mediaType = "application/json",
             array = @ArraySchema(schema = @Schema(implementation = Flashcard.class)))),
     @ApiResponse(responseCode = "404", description = "Study session not found",
-        content = @Content(mediaType = "application/json"))
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorResponse.class)))
   })
   @GetMapping("/session/{studySessionId}")
   public ResponseEntity<Iterable<Flashcard>> findBySession(@PathVariable String studySessionId) {
@@ -79,8 +83,12 @@ public class FlashcardController implements ResponseHandler {
     @ApiResponse(responseCode = "201", description = "Flashcard created",
         content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = Flashcard.class))),
-    @ApiResponse(responseCode = "400", description = "Invalid request data"),
-    @ApiResponse( responseCode = "404", description = "Study session not found")
+    @ApiResponse(responseCode = "400", description = "Invalid request data",
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse( responseCode = "404", description = "Study session not found",
+          content = {@Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorResponse.class))})
   })
   @PostMapping
   public ResponseEntity<Flashcard> createFlashcard(@RequestBody FlashcardRequest request) {
@@ -93,9 +101,15 @@ public class FlashcardController implements ResponseHandler {
     @ApiResponse(responseCode = "200", description = "Flashcard updated",
         content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = Flashcard.class))),
-    @ApiResponse(responseCode = "201", description = "Flashcard created"),
-    @ApiResponse(responseCode = "400", description = "Invalid flashcard data"),
-    @ApiResponse( responseCode = "404", description = "Study session not found")
+    @ApiResponse(responseCode = "201", description = "Flashcard created",
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Flashcard.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid flashcard data",
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse( responseCode = "404", description = "Study session not found",
+          content = {@Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorResponse.class))})
   })
   @PutMapping
   public ResponseEntity<Flashcard> update(@Valid @RequestBody Flashcard flashcard) {
@@ -107,7 +121,9 @@ public class FlashcardController implements ResponseHandler {
   @Operation(summary = "Delete a flashcard by ID")
   @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Flashcard deleted"),
-    @ApiResponse(responseCode = "404", description = "Flashcard not found")
+    @ApiResponse(responseCode = "404", description = "Flashcard not found",
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorResponse.class)))
   })
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable String id) {
