@@ -20,6 +20,16 @@ This document captures key architectural decisions made during the development o
 **Decision**: Introduce DTOs, mappers, and service layer
 **Consequences**: Easier testing and modularity
 
+---
+
+## ADR #003: Add JPA Repository  
+**Date**: 2025-07-21  
+**Status**: Accepted  
+**Context**: Data persistence and retrieval were needed for Flashcard and StudySession entities. Manual JDBC or lower-level access would hinder scalability and consistency.  
+**Decision**: Introduce Spring Data JPA repositories for entity access abstraction.  
+**Consequences**: Enables declarative data access, custom queries via method naming, and integration with Hibernate ORM out-of-the-box.
+
+
 
 ## Development Approach
 
