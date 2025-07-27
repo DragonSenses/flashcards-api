@@ -40,6 +40,13 @@ This document captures key architectural decisions made during the development o
 
 ---
 
+## ADR #005: Controllers  
+**Date**: 2025-07-23  
+**Status**: Accepted  
+**Context**: The API required clear entry points for HTTP operations with a well-documented and testable controller structure.  
+**Decision**: Build REST controllers using Spring annotations, DTO mapping, and semantic method naming. Use Swagger annotations for documentation.  
+**Consequences**: Clean separation between transport and business logic, improved API discoverability via Swagger UI, and reusable response patterns using a `ResponseHandler` interface.
+
 
 ## Development Approach
 
