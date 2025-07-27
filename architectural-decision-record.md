@@ -29,6 +29,16 @@ This document captures key architectural decisions made during the development o
 **Decision**: Introduce Spring Data JPA repositories for entity access abstraction.  
 **Consequences**: Enables declarative data access, custom queries via method naming, and integration with Hibernate ORM out-of-the-box.
 
+---
+
+## ADR #004: Exceptions and Error Handling  
+**Date**: 2025-07-21  
+**Status**: Accepted  
+**Context**: Flashcard API needed a robust way to handle invalid input, missing resources, and system-level failures with standardized error messages.  
+**Decision**: Implement a centralized error handling mechanism using custom exceptions, `ErrorResponse` DTO, and a `GlobalExceptionHandler`.  
+**Consequences**: Improved API clarity, consistent error responses, better Swagger documentation, and more maintainable exception flow.
+
+---
 
 
 ## Development Approach
