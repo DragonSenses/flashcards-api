@@ -47,6 +47,15 @@ This document captures key architectural decisions made during the development o
 **Decision**: Build REST controllers using Spring annotations, DTO mapping, and semantic method naming. Use Swagger annotations for documentation.  
 **Consequences**: Clean separation between transport and business logic, improved API discoverability via Swagger UI, and reusable response patterns using a `ResponseHandler` interface.
 
+---
+
+## ADR #00: 
+**Date**: 2025-07-18
+**Status**: Proposed / Accepted / Deprecated
+**Context**: 
+**Decision**: 
+**Consequences**: 
+
 
 ## Development Approach
 
@@ -80,13 +89,13 @@ Create the following package structure under `src/main/java/com/ken/flashcards`:
 
 ```
 ├── controller
-├── service
-├── repository
-├── model
-├── mapper
 ├── dto
-├── config
+├── error
 └── exception
+├── mapper
+├── model
+├── repository
+├── service
 ```
 
 ### Bootstrap with **Spring Initializr**
@@ -990,3 +999,77 @@ These incremental changes reflect a commitment to robust API architecture:
 - Even small ergonomic changes (`ok()` vs `new ResponseEntity`) compound over time for cleaner code.
 - Swagger annotations aren’t just for decoration — they represent a public contract and should be treated with the same rigor as method logic.
 - Capturing design rationale in ADR form helps preserve decision lineage and serves as a reference for future team members.
+
+# ⚙️ Application Configuration Overview
+
+The `application.yml` file defines global settings for the Flashcards API, centralizing framework behavior, servlet routing, logging verbosity, and documentation paths. It supports modular development, secure deployment, and profile-aware testing.
+
+---
+
+## 🧩 Role of `application.yml`
+
+- Centralizes configuration for **Spring Boot** application startup
+- Establishes **RESTful base paths** using dynamic servlet mappings
+- Configures **data source** parameters for local development
+- Enables **SQL initialization behavior** for schema/data bootstrap
+- Controls **logging verbosity** and target packages for debug visibility
+- Defines **Swagger/OpenAPI** UI access paths for documentation
+
+---
+
+## 📂 Location in Project Structure
+
+The file resides in:
+
+```
+src/main/resources/application.yml
+```
+
+This is the default Spring Boot config location recognized on application startup.
+
+---
+
+## 🛠 Configuration Highlights
+
+| Section                 | Key Purpose                                           |
+|-------------------------|------------------------------------------------------|
+| `spring.datasource`     | JDBC connection URL, credentials (placeholder)       |
+| `sql.init.mode`         | Auto-execute schema/data scripts on app startup      |
+| `spring.servlet.path`   | Modular route nesting (`/api/v1/...`) for endpoints  |
+| `server.port`           | Application entry port (`8080`)                      |
+| `logging.level`         | Custom log output for Spring and app-specific logic  |
+| `springdoc`             | Swagger API doc and UI path customization            |
+
+Example dynamic routes resolved from nested config:
+- `/api/v1/categories`
+- `/api/v1/flashcards`
+- `/api/v1/study-sessions`
+
+---
+
+## 🔒 Sensitive Fields
+
+For public templates:
+- `username` and `password` should remain **unset or commented**
+- Real credentials can be externalized via environment variables or secrets managers
+
+---
+
+## 🧪 Dev/Test Profile Tip
+
+To extend for multiple environments:
+- Use `application-dev.yml` and `application-test.yml`
+- Activate profiles with:  
+  ```yaml
+  spring:
+    profiles:
+      active: dev
+  ```
+
+This promotes safe switching between local, test, and production configurations.
+
+---
+
+## 🧠 Design Insight
+
+The path templating strategy (`${spring.servlet.path.base}`) fosters scalable API modularity across domain controllers. This clean separation improves both endpoint discoverability and Swagger documentation clarity.
