@@ -1073,3 +1073,92 @@ This promotes safe switching between local, test, and production configurations.
 ## 🧠 Design Insight
 
 The path templating strategy (`${spring.servlet.path.base}`) fosters scalable API modularity across domain controllers. This clean separation improves both endpoint discoverability and Swagger documentation clarity.
+
+# 🗄️ SQL Schema Overview
+
+The `schema.sql` file defines the relational data model for the Flashcards API, creating core tables and establishing integrity constraints across domain entities. It ensures that the database aligns with the structure of your domain model and supports cascading deletions for relational consistency.
+
+---
+
+## 📍 File Location
+
+```
+src/main/resources/schema.sql
+```
+
+Spring Boot executes this script automatically on startup when:
+
+```yaml
+spring.sql.init.mode: always
+```
+
+is active in the `application.yml`.
+
+---
+
+## 🧩 Role of `schema.sql`
+
+- Initializes **category**, **study_session**, and **flashcard** tables
+- Sets **primary keys** using `VARCHAR(40)` — compatible with UUID usage
+- Applies **foreign key relationships** between tables
+- Enforces **unique constraints** to maintain data integrity
+- Implements **cascade operations** to auto-clean dependent records
+
+---
+
+## 🧱 Table Relationships
+
+| Table          | Depends On       | Key Constraints                       |
+|----------------|------------------|---------------------------------------|
+| `category`     | —                | Unique `name`, primary key `id`       |
+| `study_session`| `category`       | Foreign key `category_id` → `category.id` |
+| `flashcard`    | `study_session`  | Foreign key `study_session_id` → `study_session.id` |
+
+Foreign key constraints use:
+- `ON DELETE CASCADE`
+- `ON UPDATE CASCADE`  
+to ensure referential integrity during parent table changes.
+
+---
+
+## ✅ Implementation
+
+```sql
+DROP TABLE IF EXISTS flashcard;
+DROP TABLE IF EXISTS study_session;
+DROP TABLE IF EXISTS category;
+
+CREATE TABLE category (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    name VARCHAR(30) NOT NULL,
+    CONSTRAINT name_unique UNIQUE (name)
+);
+
+CREATE TABLE study_session (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    category_id VARCHAR(40) NOT NULL,
+    name VARCHAR(30) NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES category(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE flashcard (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    study_session_id VARCHAR(40) NOT NULL,
+    question VARCHAR(200) NOT NULL,
+    answer VARCHAR(300) NOT NULL,
+    FOREIGN KEY (study_session_id) REFERENCES study_session(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+```
+
+## 💡 Design Insights
+
+- `DROP TABLE IF EXISTS` allows repeatable development cycles and local resets
+- Explicit creation order respects dependencies:  
+  `category` → `study_session` → `flashcard`
+- Table naming aligns with controller paths and DTO structure
+
+---
