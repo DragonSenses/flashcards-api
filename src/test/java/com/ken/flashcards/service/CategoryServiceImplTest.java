@@ -69,6 +69,27 @@ public class CategoryServiceImplTest {
   }
 
   @Test
+  void findByIdThrowsExceptionWhenIdIsNull() {
+    IllegalArgumentException ex =
+        assertThrows(IllegalArgumentException.class, () -> categoryService.findById(null));
+    assertEquals("Id must not be null or empty", ex.getMessage());
+  }
+
+  @Test
+  void findByIdThrowsExceptionWhenIdIsEmpty() {
+    IllegalArgumentException ex =
+        assertThrows(IllegalArgumentException.class, () -> categoryService.findById(""));
+    assertEquals("Id must not be null or empty", ex.getMessage());
+  }
+
+  @Test
+  void findByIdThrowsExceptionWhenIdIsWhitespace() {
+    IllegalArgumentException ex =
+        assertThrows(IllegalArgumentException.class, () -> categoryService.findById("   "));
+    assertEquals("Id must not be null or empty", ex.getMessage());
+  }
+
+  @Test
   void findByIdPropagatesRepositoryException() {
     when(categoryRepository.findById("1")).thenThrow(new RuntimeException("DB unavailable"));
 
