@@ -48,21 +48,21 @@ public class CategoryServiceImplTest {
   }
 
   @Test
-  void findsAllOrderedByName() {
+  void findAllOrderedByName() {
     when(categoryRepository.findAllByOrderByNameAsc()).thenReturn(categories);
     assertEquals(categories, categoryService.findAll());
     verify(categoryRepository, times(1)).findAllByOrderByNameAsc();
   }
 
   @Test
-  void returnsEmptyListWhenNoCategoriesExist() {
+  void returnEmptyListWhenNoCategoriesExist() {
     when(categoryRepository.findAllByOrderByNameAsc()).thenReturn(List.of());
     assertEquals(List.of(), categoryService.findAll());
     verify(categoryRepository, times(1)).findAllByOrderByNameAsc();
   }
 
   @Test
-  void findsCategoryById() {
+  void findCategoryById() {
     when(categoryRepository.findById("1")).thenReturn(Optional.of(category));
     assertEquals(category, categoryService.findById("1"));
     verify(categoryRepository, times(1)).findById("1");
@@ -110,12 +110,33 @@ public class CategoryServiceImplTest {
   }
 
   @Test
-  void findsCategoryByName() {
+  void findCategoryByName() {
     when(categoryRepository.findByName("Thermodynamics"))
         .thenReturn(Optional.of(new Category("1", "Thermodynamics")));
 
     assertEquals(new Category("1", "Thermodynamics"), categoryService.findByName("Thermodynamics"));
     verify(categoryRepository, times(1)).findByName("Thermodynamics");
+  }
+
+  @Test
+  void findByNameThrowsExceptionWhenNameIsNull() {
+    IllegalArgumentException ex =
+        assertThrows(IllegalArgumentException.class, () -> categoryService.findByName(null));
+    assertEquals("Name must not be null or empty", ex.getMessage());
+  }
+
+  @Test
+  void findByNameThrowsExceptionWhenNameIsEmpty() {
+    IllegalArgumentException ex =
+        assertThrows(IllegalArgumentException.class, () -> categoryService.findByName(""));
+    assertEquals("Name must not be null or empty", ex.getMessage());
+  }
+
+  @Test
+  void findByNameThrowsExceptionWhenNameIsWhitespace() {
+    IllegalArgumentException ex =
+        assertThrows(IllegalArgumentException.class, () -> categoryService.findByName("   "));
+    assertEquals("Name must not be null or empty", ex.getMessage());
   }
 
   @Test
@@ -128,4 +149,6 @@ public class CategoryServiceImplTest {
     assertEquals("Cannot find category with name = Thermodynamics", ex.getMessage());
     verify(categoryRepository, times(1)).findByName("Thermodynamics");
   }
+
+
 }

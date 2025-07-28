@@ -21,6 +21,7 @@ import com.ken.flashcards.service.ValidatingService;
 public class CategoryServiceImpl extends ValidatingService implements CategoryService {
 
   private static final String CANNOT_FIND_BY_ID = "Cannot find category with id = %s";
+  private static final String CANNOT_FIND_BY_NAME = "Cannot find category with name = %s";
 
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
@@ -72,14 +73,17 @@ public class CategoryServiceImpl extends ValidatingService implements CategorySe
   @Override
   public void assertExistsById(String id) {
     if (!existsById(id)) {
-      throw new NotFoundException(format("Cannot find category with id = %s", id));
+      throw new NotFoundException(format(CANNOT_FIND_BY_ID, id));
     }
   }
 
   @Override
   public Category findByName(String name) {
-    return categoryRepository.findByName(name).orElseThrow(
-        () -> new NotFoundException(format("Cannot find category with name = %s", name)));
+    if (name == null || name.trim().isEmpty()) {
+      throw new IllegalArgumentException("Name must not be null or empty");
+    }
+    return categoryRepository.findByName(name)
+        .orElseThrow(() -> new NotFoundException(format(CANNOT_FIND_BY_NAME, name)));
   }
 
   @Override
