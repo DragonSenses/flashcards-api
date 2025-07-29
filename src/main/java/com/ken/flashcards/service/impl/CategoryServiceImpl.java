@@ -20,8 +20,9 @@ import com.ken.flashcards.service.ValidatingService;
 @Transactional
 public class CategoryServiceImpl extends ValidatingService implements CategoryService {
 
-  private static final String CANNOT_FIND_BY_ID = "Cannot find category with id = %s";
-  private static final String CANNOT_FIND_BY_NAME = "Cannot find category with name = %s";
+  private static final String CANNOT_FIND_BY_ID = "Category with id '%s' not found";
+  private static final String CANNOT_FIND_BY_NAME = "Category with name '%s' not found";
+  private static final String ALREADY_EXISTS_BY_NAME = "Category with name '%s' already exists";
 
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
@@ -103,7 +104,7 @@ public class CategoryServiceImpl extends ValidatingService implements CategorySe
 
   private void assertDoesNotExistByName(String name) {
     if (categoryRepository.existsByName(name)) {
-      throw new ConflictException(format("Category with name '%s' already exists", name));
+      throw new ConflictException(format(ALREADY_EXISTS_BY_NAME, name));
     }
   }
 

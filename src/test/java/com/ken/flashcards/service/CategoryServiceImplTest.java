@@ -105,7 +105,7 @@ public class CategoryServiceImplTest {
     NotFoundException ex =
         assertThrows(NotFoundException.class, () -> categoryService.findById("1"));
 
-    assertEquals("Cannot find category with id = 1", ex.getMessage());
+    assertEquals("Category with id '1' not found", ex.getMessage());
     verify(categoryRepository, times(1)).findById("1");
 
   }
@@ -147,7 +147,7 @@ public class CategoryServiceImplTest {
     NotFoundException ex =
         assertThrows(NotFoundException.class, () -> categoryService.findByName("Thermodynamics"));
 
-    assertEquals("Cannot find category with name = Thermodynamics", ex.getMessage());
+    assertEquals("Category with name 'Thermodynamics' not found", ex.getMessage());
     verify(categoryRepository, times(1)).findByName("Thermodynamics");
   }
 
