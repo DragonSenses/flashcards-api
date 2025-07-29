@@ -103,7 +103,7 @@ public class CategoryServiceImpl extends ValidatingService implements CategorySe
 
   private void assertDoesNotExistByName(String name) {
     if (categoryRepository.existsByName(name)) {
-      throw new ConflictException(format("Category with name = %s already exists", name));
+      throw new ConflictException(format("Category with name '%s' already exists", name));
     }
   }
 
