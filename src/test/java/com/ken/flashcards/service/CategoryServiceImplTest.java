@@ -150,5 +150,16 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).findByName("Thermodynamics");
   }
 
+  @Test
+  void createCategory() {
+    when(categoryRepository.existsByName(request.getName())).thenReturn(false);
+    when(categoryMapper.categoryFrom(request)).thenReturn(category);
+    when(categoryRepository.save(category)).thenReturn(category);
+
+    assertEquals(categoryService.createCategory(request), category);
+    verify(categoryRepository, times(1)).existsByName(request.getName());
+    verify(categoryMapper, times(1)).categoryFrom(request);
+    verify(categoryRepository, times(1)).save(category);
+  }
 
 }
