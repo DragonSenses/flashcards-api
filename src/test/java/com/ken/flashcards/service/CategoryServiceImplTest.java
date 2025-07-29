@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ken.flashcards.dto.CategoryRequest;
+import com.ken.flashcards.exception.ConflictException;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.mapper.CategoryMapper;
 import com.ken.flashcards.model.Category;
@@ -160,6 +161,17 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).existsByName(request.getName());
     verify(categoryMapper, times(1)).categoryFrom(request);
     verify(categoryRepository, times(1)).save(category);
+  }
+
+  @Test
+  void createCategoryWithDuplicateNameThrowsConflictException() {
+    when(categoryRepository.existsByName("Astronomy")).thenReturn(true);
+
+    ConflictException ex = assertThrows(ConflictException.class,
+        () -> categoryService.createCategory(new CategoryRequest("Astronomy")));
+
+    assertEquals("Category with name 'Astronomy' already exists", ex.getMessage());
+    verify(categoryRepository, times(1)).existsByName("Astronomy");
   }
 
 }
