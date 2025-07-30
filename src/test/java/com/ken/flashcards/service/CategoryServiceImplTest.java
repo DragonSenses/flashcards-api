@@ -210,4 +210,36 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).existsById("1");
   }
 
+  @Test
+  void throwsNotFoundExceptionWhenCategoryIdDoesNotExist() {
+    when(categoryRepository.existsById("1")).thenReturn(false);
+
+    Throwable ex =
+        assertThrows(NotFoundException.class, () -> categoryService.assertExistsById("1"));
+
+    assertEquals("Category with id '1' not found", ex.getMessage());
+  }
+
+  @Test
+  void throwsNotFoundExceptionWhenCategoryNameDoesNotExist() {
+    when(categoryRepository.findByName("English")).thenReturn(Optional.empty());
+
+    Throwable ex = assertThrows(NotFoundException.class,
+        () -> categoryService.idFromCategoryWithName("English"));
+
+    assertEquals("Category with name 'English' not found", ex.getMessage());
+    verify(categoryRepository, times(1)).findByName("English");
+  }
+
+  @Test
+  void returnsIdWhenCategoryNameExists() {
+    when(categoryRepository.findByName("History"))
+        .thenReturn(Optional.of(new Category("10", "History")));
+
+    String id = categoryService.idFromCategoryWithName("History");
+
+    assertEquals("10", id);
+    verify(categoryRepository, times(1)).findByName("History");
+  }
+
 }
