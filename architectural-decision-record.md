@@ -1306,3 +1306,69 @@ This test verifies:
 - Correct method delegation to `categoryRepository`
 - Sorted data retrieval via `findAllByOrderByNameAsc()`
 - Consistency between mock output and service return value
+
+---
+
+# 🧪 Mapper Test Suite Overview
+
+Mapper tests ensure that DTO-to-entity transformations behave predictably, with correct field mapping and reliable ID generation. These tests complement validation and controller-layer logic by verifying the integrity of your domain construction pipeline.
+
+Each test class directly targets a mapper implementation, mocking `IdGenerator` where applicable to decouple randomness and guarantee deterministic outputs.
+
+### 📦 Package Location
+All mapper tests are located in:
+```
+com.ken.flashcards.mapper
+```
+
+---
+
+### 📌 Test Coverage Summary
+
+| Test Class                      | Purpose                                                   |
+|---------------------------------|-----------------------------------------------------------|
+| `CategoryMapperImplTest`        | Verifies mapping of `CategoryRequest` → `Category`         |
+| `FlashcardMapperImplTest`       | Verifies mapping of `FlashcardRequest` → `Flashcard`       |
+| `StudySessionMapperImplTest`    | Verifies mapping of `StudySessionRequest` → `StudySession` |
+
+All tests use isolated unit testing strategies with direct assertions on mapped field values.
+
+---
+
+### ⚙️ Example: `FlashcardMapperImplTest`
+
+```java
+class FlashcardMapperImplTest {
+
+  private IdGenerator idGenerator;
+  private FlashcardMapper flashcardMapper;
+
+  @BeforeEach
+  void setUp() {
+    idGenerator = mock(IdGenerator.class);
+    flashcardMapper = new FlashcardMapperImpl(idGenerator);
+  }
+
+  @Test
+  void shouldMapFlashcardRequestToEntity() {
+    when(idGenerator.generateId()).thenReturn("flashcard-123");
+
+    FlashcardRequest request = new FlashcardRequest("session-01", "What is encapsulation?", "Wrapping data and methods together");
+    Flashcard result = flashcardMapper.flashcardFrom(request);
+
+    assertEquals("flashcard-123", result.id());
+    assertEquals("session-01", result.studySessionId());
+    assertEquals("What is encapsulation?", result.question());
+    assertEquals("Wrapping data and methods together", result.answer());
+  }
+}
+```
+
+---
+
+## 🧠 Test Design Notes
+
+- 🧪 **Isolated behavior**: Each test validates only mapper logic — external collaborators are mocked.
+- 🧾 **Field-level assertions**: Tests verify that all properties are transferred correctly from DTO to entity.
+- 🔧 **Mocked `IdGenerator`**: Ensures ID values are predictable and test-safe.
+- 🧼 **No side effects**: Mappers are pure functions, ideal for clean unit testing.
