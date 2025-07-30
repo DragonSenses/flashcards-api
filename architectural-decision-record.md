@@ -1372,3 +1372,53 @@ class FlashcardMapperImplTest {
 - 🧾 **Field-level assertions**: Tests verify that all properties are transferred correctly from DTO to entity.
 - 🔧 **Mocked `IdGenerator`**: Ensures ID values are predictable and test-safe.
 - 🧼 **No side effects**: Mappers are pure functions, ideal for clean unit testing.
+
+---
+
+# 🧪 DTO Validation Test Overview
+
+The app’s request DTOs include field-level validation to ensure data integrity before entering the service layer. Dedicated unit tests confirm that each constraint behaves correctly under common failure conditions, safeguarding against malformed input and reinforcing the API's contract.
+
+Validation tests focus on constraint annotations like `@NotBlank`, using the Bean Validation API (JSR-380) to simulate how payloads are enforced during runtime.
+
+### 📦 Package Location
+All DTO tests are located in:
+```
+com.ken.flashcards.dto
+```
+
+---
+
+### 📌 Test Coverage Summary
+
+| Test Class                | Purpose                                                                 |
+|--------------------------|-------------------------------------------------------------------------|
+| `CategoryRequestTest`     | Verifies `@NotBlank` constraint on `name` field                         |
+| `StudySessionRequestTest` | Verifies `@NotBlank` constraints on `categoryId` and `name`             |
+| `FlashcardRequestTest`    | Verifies `@NotBlank` constraints on `studySessionId`, `question`, `answer` |
+
+Each test ensures blank inputs trigger correct constraint violations and that well-formed payloads pass successfully.
+
+---
+
+### ⚙️ Example: `StudySessionRequestTest`
+
+```java
+@Test
+void shouldFailValidationWhenCategoryIdIsBlank() {
+  StudySessionRequest request = new StudySessionRequest("  ", "Art History");
+  Set<ConstraintViolation<StudySessionRequest>> violations = validator.validate(request);
+
+  assertFalse(violations.isEmpty());
+  assertEquals("category id is required", violations.iterator().next().getMessage());
+}
+```
+
+---
+
+## 🧠 Test Design Notes
+
+- 🔍 **JSR-380 Validator**: Each test uses Jakarta Bean Validation to detect violations, mimicking controller-level enforcement.
+- 🧪 **Field-level coverage**: Tests focus on `@NotBlank` annotations with custom messages.
+- 📎 **Custom failure messaging**: Each DTO uses domain-specific feedback, which tests verify directly.
+- 🔁 **Stateless and isolated**: No Spring context required — tests rely purely on the validation engine.
