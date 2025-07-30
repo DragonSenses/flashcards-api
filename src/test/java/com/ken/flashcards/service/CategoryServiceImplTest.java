@@ -174,4 +174,24 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).existsByName("Astronomy");
   }
 
+
+  @Test
+  void deletesCategoryWhenIdExists() {
+    when(categoryRepository.existsById("1")).thenReturn(true);
+
+    categoryService.deleteById("1");
+    verify(categoryRepository, times(1)).deleteById("1");
+  }
+
+  @Test
+  void throwExceptionWhenDeletingNonExistentCategory() {
+    when(categoryRepository.existsById("1")).thenReturn(false);
+
+    NotFoundException ex =
+        assertThrows(NotFoundException.class, () -> categoryService.deleteById("1"));
+
+    assertEquals("Category with id '1' not found", ex.getMessage());
+    verify(categoryRepository, times(1)).existsById("1");
+  }
+
 }
