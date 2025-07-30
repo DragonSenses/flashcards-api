@@ -23,6 +23,9 @@ public class StudySessionServiceImpl extends ValidatingService implements StudyS
   private final CategoryService categoryService;
   private final StudySessionMapper studySessionMapper;
 
+  private static final String CANNOT_FIND_BY_ID = "Study session with ID '%s' not found";
+  private static final String CANNOT_FIND_BY_NAME = "Study session with name '%s' not found";
+
   @Autowired
   public StudySessionServiceImpl(StudySessionRepository studySessionRepository,
       CategoryService categoryService, StudySessionMapper studySessionMapper) {
@@ -39,7 +42,7 @@ public class StudySessionServiceImpl extends ValidatingService implements StudyS
   @Override
   public StudySession findById(String id) {
     return studySessionRepository.findById(id).orElseThrow(
-        () -> new NotFoundException(format("Cannot find study session with id = %s", id)));
+        () -> new NotFoundException(format(CANNOT_FIND_BY_ID, id)));
   }
 
   @Override
@@ -69,7 +72,7 @@ public class StudySessionServiceImpl extends ValidatingService implements StudyS
   @Override
   public void assertExistsById(String id) {
     if (!existsById(id)) {
-      throw new NotFoundException(format("Cannot find study session with id = %s", id));
+      throw new NotFoundException(format(CANNOT_FIND_BY_ID, id));
     }
   }
 
@@ -86,7 +89,7 @@ public class StudySessionServiceImpl extends ValidatingService implements StudyS
 
   private StudySession findByName(String name) {
     return studySessionRepository.findByName(name).orElseThrow(
-        () -> new NotFoundException(format("Cannot find study session with name = %s", name)));
+        () -> new NotFoundException(format(CANNOT_FIND_BY_NAME, name)));
   }
 
   private void validate(StudySession studySession) {

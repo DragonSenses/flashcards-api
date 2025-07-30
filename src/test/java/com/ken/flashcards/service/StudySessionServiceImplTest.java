@@ -1,5 +1,6 @@
 package com.ken.flashcards.service;
 
+import static java.lang.String.format;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -45,6 +46,9 @@ public class StudySessionServiceImplTest {
   private final String expectedCategoryId = "category-space-science";
   private final String expectedSessionName = "Introduction to Astronomy";
 
+  private static final String CANNOT_FIND_BY_ID = "Study session with ID '%s' not found";
+  private static final String CANNOT_FIND_BY_NAME = "Study session with name '%s' not found";
+
   @BeforeEach
   void init() {
     String studySessionId = expectedSessionId;
@@ -78,10 +82,9 @@ public class StudySessionServiceImplTest {
     NotFoundException ex = assertThrows(NotFoundException.class,
         () -> studySessionService.findById(expectedSessionId));
 
-    assertEquals("StudySession with id '" + expectedSessionId + "' not found", ex.getMessage());
+    assertEquals(format(CANNOT_FIND_BY_ID, expectedSessionId), ex.getMessage());
     verify(studySessionRepository, times(1)).findById(expectedSessionId);
   }
-
 
   @Test
   void shouldReturnStudySessionsByCategoryId() {
