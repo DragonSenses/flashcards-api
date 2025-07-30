@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -191,6 +192,21 @@ public class CategoryServiceImplTest {
         assertThrows(NotFoundException.class, () -> categoryService.deleteById("1"));
 
     assertEquals("Category with id '1' not found", ex.getMessage());
+    verify(categoryRepository, times(1)).existsById("1");
+  }
+
+  @Test
+  void savesCategorySuccessfully() {
+    when(categoryRepository.save(category)).thenReturn(category);
+    assertEquals(category, categoryService.save(category));
+    verify(categoryRepository, times(1)).save(category);
+  }
+
+  @Test
+  void returnsTrueWhenCategoryExistsById() {
+    when(categoryRepository.existsById("1")).thenReturn(true);
+
+    assertTrue(categoryService.existsById("1"));
     verify(categoryRepository, times(1)).existsById("1");
   }
 
