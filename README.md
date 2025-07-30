@@ -7,11 +7,16 @@ Work in Progress:
 - [x] Repo
 - [x] Exception
 - [x] Service
-- [ ] Controller
-- [ ] 
-- [ ] Mock SQL Test Data
+- [x] Controller
+- [x] Mock SQL Test Data
 - [ ] Unit Tests
+  - [x] CategoryService
+  - [ ] FlashcardService
+  - [ ] StudySessionService
+  - [x] Mapper null-safe transformations
+  - [x] DTO validation logic
 - [ ] Integration Tests
+  - [ ] Controller / Service / Repo flow
 
 # High Level Architecture
 
