@@ -52,8 +52,12 @@ public class StudySessionServiceImplTest {
   private final String expectedSessionName = "Introduction to Astronomy";
 
   private final String nonexistentSessionId = "session-neptune-999";
+  private final String nonexistentSessionName = "Advanced Conjuration";
+  private final String existingSessionName = "Engineering";
+
 
   private static final String CANNOT_FIND_BY_ID = "Study session with ID '%s' not found";
+  private static final String CANNOT_FIND_BY_NAME = "Study session with name '%s' not found";
   private static final String CANNOT_FIND_CATEGORY_BY_ID = "Study session with category ID '%s' not found";
 
   @BeforeEach
@@ -86,6 +90,7 @@ public class StudySessionServiceImplTest {
     verify(studySessionRepository, times(1)).findById(expectedSessionId);
   }
 
+  // findById()
   // Confirms an exception is thrown if the study session ID doesn't exist
   @Test
   void shouldThrowNotFoundExceptionWhenStudySessionDoesNotExist() {
@@ -109,6 +114,7 @@ public class StudySessionServiceImplTest {
     verify(studySessionRepository, times(1)).findAllByCategoryId(expectedCategoryId);
   }
 
+  // createStudySession()
   // Verifies successful creation of a StudySession from a valid request
   @Test
   void shouldCreateStudySessionWithValidCategory() {
@@ -123,6 +129,7 @@ public class StudySessionServiceImplTest {
     verify(studySessionRepository, times(1)).save(studySession);
   }
 
+  // createStudySession()
   // Ensures NotFoundException is thrown when creating a StudySession with a missing category
   @Test
   void shouldThrowExceptionWhenCreatingStudySessionWithInvalidCategory() {
@@ -211,4 +218,27 @@ public class StudySessionServiceImplTest {
     assertDoesNotThrow(() -> studySessionService.assertExistsById(expectedSessionId));
   }
 
+  // idFromStudySessionWithName()
+  // Retrieves the ID from a StudySession given its name
+  @Test
+  void shouldReturnIdFromStudySessionWhenNameExists() {
+    when(studySessionRepository.findByName(existingSessionName))
+        .thenReturn(Optional.of(new StudySession("99", "9", existingSessionName)));
+
+    String id = studySessionService.idFromStudySessionWithName(existingSessionName);
+    assertEquals("99", id);
+    verify(studySessionRepository, times(1)).findByName(existingSessionName);
+  }
+
+  // idFromStudySessionWithName()
+  // Throws NotFoundException when StudySession with name is not found
+  @Test
+  void shouldThrowExceptionWhenStudySessionNameDoesNotExist() {
+    when(studySessionRepository.findByName(nonexistentSessionName)).thenReturn(Optional.empty());
+
+    NotFoundException ex = assertThrows(NotFoundException.class,
+        () -> studySessionService.idFromStudySessionWithName(nonexistentSessionName));
+    
+    assertEquals(format(CANNOT_FIND_BY_NAME, nonexistentSessionName), ex.getMessage());
+  }
 }
