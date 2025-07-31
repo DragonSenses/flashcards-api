@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -190,5 +191,24 @@ public class StudySessionServiceImplTest {
     verify(studySessionRepository, times(1)).existsById(nonexistentSessionId);
   }
 
+  // assertExistsById()
+  // Throws exception when StudySession does not exist
+  @Test
+  void shouldThrowExceptionIfStudySessionDoesNotExistById() {
+    when(studySessionRepository.existsById(nonexistentSessionId)).thenReturn(false);
+
+    NotFoundException ex = assertThrows(NotFoundException.class,
+        () -> studySessionService.assertExistsById(nonexistentSessionId));
+    assertEquals(format(CANNOT_FIND_BY_ID, nonexistentSessionId), ex.getMessage());
+  }
+
+  // assertExistsById()
+  // Confirms no exception is thrown when StudySession exists
+  @Test
+  void shouldNotThrowExceptionIfStudySessionExistsById() {
+    when(studySessionRepository.existsById(expectedSessionId)).thenReturn(true);
+
+    assertDoesNotThrow(() -> studySessionService.assertExistsById(expectedSessionId));
+  }
 
 }
