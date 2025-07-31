@@ -3,6 +3,7 @@ package com.ken.flashcards.service;
 import static java.lang.String.format;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -86,6 +87,18 @@ public class FlashcardServiceImplTest {
 
     assertEquals(format(CANNOT_FIND_BY_ID, expectedFlashcardId), ex.getMessage());
     verify(flashcardRepository, times(1)).findById(expectedFlashcardId);
+  }
+
+  // findAllByStudySessionId()
+  // Retrieves all flashcards associated with a specific study session
+  @Test
+  void shouldReturnFlashcardsByStudySessionId() {
+    when(flashcardRepository.findAllByStudySessionId(expectedStudySessionId))
+        .thenReturn(Set.of(flashcard));
+
+    assertEquals(Set.of(flashcard),
+        flashcardService.findAllByStudySessionId(expectedStudySessionId));
+    verify(flashcardRepository, times(1)).findAllByStudySessionId(expectedStudySessionId);
   }
 
 }
