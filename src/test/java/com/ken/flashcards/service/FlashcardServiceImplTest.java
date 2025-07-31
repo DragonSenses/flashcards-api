@@ -1,9 +1,11 @@
 package com.ken.flashcards.service;
 
+import static java.lang.String.format;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.mapper.FlashcardMapper;
 import com.ken.flashcards.model.Flashcard;
 import com.ken.flashcards.repository.FlashcardRepository;
@@ -69,6 +72,19 @@ public class FlashcardServiceImplTest {
     when(flashcardRepository.findById(expectedFlashcardId)).thenReturn(Optional.of(flashcard));
 
     assertEquals(flashcard, flashcardService.findById(expectedFlashcardId));
+    verify(flashcardRepository, times(1)).findById(expectedFlashcardId);
+  }
+
+  // findById()
+  // Throws NotFoundException when flashcard ID is not found
+  @Test
+  void shouldThrowExceptionWhenFlashcardDoesNotExistById() {
+    when(flashcardRepository.findById(expectedFlashcardId)).thenReturn(Optional.empty());
+
+    NotFoundException ex = assertThrows(NotFoundException.class, 
+        () -> flashcardService.findById(expectedFlashcardId));
+
+    assertEquals(format(CANNOT_FIND_BY_ID, expectedFlashcardId), ex.getMessage());
     verify(flashcardRepository, times(1)).findById(expectedFlashcardId);
   }
 
