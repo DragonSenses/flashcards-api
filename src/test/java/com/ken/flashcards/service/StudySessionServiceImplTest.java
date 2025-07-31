@@ -6,7 +6,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +49,8 @@ public class StudySessionServiceImplTest {
   private final String expectedSessionId = "session-astro-001";
   private final String expectedCategoryId = "category-space-science";
   private final String expectedSessionName = "Introduction to Astronomy";
+
+  private final String nonexistentSessionId = "session-neptune-999";
 
   private static final String CANNOT_FIND_BY_ID = "Study session with ID '%s' not found";
   private static final String CANNOT_FIND_BY_NAME = "Study session with name '%s' not found";
@@ -135,4 +139,33 @@ public class StudySessionServiceImplTest {
     verify(categoryService, times(1)).assertExistsById(expectedCategoryId);
   }
 
+  // save()
+  // Verifies that a StudySession is saved and returned correctly
+  @Test
+  void shouldSaveStudySessionToRepository() {
+    when(studySessionRepository.save(studySession)).thenReturn(studySession);
+
+    assertEquals(studySession, studySessionService.save(studySession));
+    verify(studySessionRepository, times(1)).save(studySession);
+  }
+
+  // existsById()
+  // Confirms existence check behavior for valid StudySession IDs
+  @Test
+  void shouldReturnTrueWhenStudySessionExistsById() {
+    when(studySessionRepository.existsById(expectedSessionId)).thenReturn(true);
+
+    assertTrue(studySessionService.existsById(expectedSessionId));
+    verify(studySessionRepository, times(1)).existsById(expectedSessionId);
+  }
+
+  // existsById()
+  // Confirms existence check behavior for invalid StudySession IDs
+  @Test
+  void shouldReturnFalseWhenStudySessionDoesNotExistById() {
+    when(studySessionRepository.existsById(nonexistentSessionId)).thenReturn(false);
+
+    assertFalse(studySessionService.existsById(nonexistentSessionId));
+    verify(studySessionRepository, times(1)).existsById(nonexistentSessionId);
+  }
 }
