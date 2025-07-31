@@ -1422,3 +1422,43 @@ void shouldFailValidationWhenCategoryIdIsBlank() {
 - 🧪 **Field-level coverage**: Tests focus on `@NotBlank` annotations with custom messages.
 - 📎 **Custom failure messaging**: Each DTO uses domain-specific feedback, which tests verify directly.
 - 🔁 **Stateless and isolated**: No Spring context required — tests rely purely on the validation engine.
+
+---
+
+# 📘 StudySessionService Test Overview
+
+This document outlines the unit test coverage for `StudySessionServiceImpl`, focusing on behavioral guarantees, exception handling, and input/output integrity.
+
+---
+
+## ✅ Coverage Summary
+
+| **Service Method**                   | **Tested Behaviors**                                                                                                                                     | **Edge Cases / Exceptions**                                       |
+|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
+| `findAll()`                          | Returns all persisted StudySessions via repository                                                                                                       | –                                                                 |
+| `findById(String)`                   | Returns session by valid ID                                                                                                                              | Throws `NotFoundException` if session is absent                   |
+| `findAllByCategoryId(String)`        | Retrieves sessions filtered by `categoryId`                                                                                                              | –                                                                 |
+| `createStudySession(StudySessionRequest)` | Valid category results in a properly mapped and saved StudySession                                                                             | Throws `NotFoundException` if category is missing                 |
+| `save(StudySession)`                | Persists a `StudySession` entity to the repository                                                                                                       | –                                                                 |
+| `existsById(String)`                | Returns `true` or `false` depending on session existence                                                                                                 | Validates both existence and non-existence paths                  |
+| `deleteById(String)`               | Deletes session when present                                                                                                                             | Throws `NotFoundException` if session is missing                  |
+| `assertExistsById(String)`         | Silently verifies session presence                                                                                                                       | Throws `NotFoundException` for absent ID                         |
+| `idFromStudySessionWithName(String)`| Retrieves ID of session with matching name                                                                                                               | Throws `NotFoundException` if name not found                      |
+
+---
+
+## 🧪 Test Design Highlights
+
+- **Isolation:** All repository and dependent services are mocked via `@ExtendWith(MockitoExtension.class)`
+- **Constants-Driven:** Tests reuse consistent session/category IDs and error message templates
+- **Exception Testing:** All negative paths assert exception type *and* message clarity
+- **Mapper Verification:** `StudySessionMapperTest` separately confirms entity construction using `StudySessionRequest` and ID generation
+- **Data Integrity:** Assertions confirm correct field values and repository interaction frequency
+
+---
+
+## 🧱 Supporting Tests
+
+- `StudySessionMapperTest`: Validates transformation logic from request DTO to domain entity, including ID generation
+- `CategoryService.assertExistsById()`: Covered implicitly via service invocation and exception handling
+
