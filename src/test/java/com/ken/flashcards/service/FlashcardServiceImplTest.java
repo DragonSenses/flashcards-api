@@ -154,4 +154,14 @@ public class FlashcardServiceImplTest {
     verify(flashcardRepository, times(1)).existsById(expectedFlashcardId);
   }
 
+  // save()
+  // Persists a flashcard and returns the saved entity
+  @Test
+  void shouldSaveFlashcardSuccessfully() {
+    when(flashcardRepository.save(flashcard)).thenReturn(flashcard);
+
+    assertEquals(flashcard, flashcardService.save(flashcard));
+    verify(flashcardRepository, times(1)).save(flashcard);
+  }
+
 }
