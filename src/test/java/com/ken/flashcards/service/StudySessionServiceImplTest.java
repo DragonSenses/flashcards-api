@@ -53,9 +53,7 @@ public class StudySessionServiceImplTest {
   private final String nonexistentSessionId = "session-neptune-999";
 
   private static final String CANNOT_FIND_BY_ID = "Study session with ID '%s' not found";
-  private static final String CANNOT_FIND_BY_NAME = "Study session with name '%s' not found";
-  private static final String CANNOT_FIND_CATEGORY_BY_ID =
-      "Study session with cateogry ID '%s' not found";
+  private static final String CANNOT_FIND_CATEGORY_BY_ID = "Study session with category ID '%s' not found";
 
   @BeforeEach
   void init() {
@@ -67,7 +65,7 @@ public class StudySessionServiceImplTest {
     this.studySessions = List.of(studySession);
   }
 
-  // findALl()
+  // findAll()
   // Verifies that all stored study sessions are returned from the repository
   @Test
   void shouldReturnAllStudySessionsFromRepository() {
@@ -168,4 +166,29 @@ public class StudySessionServiceImplTest {
     assertFalse(studySessionService.existsById(nonexistentSessionId));
     verify(studySessionRepository, times(1)).existsById(nonexistentSessionId);
   }
+
+  // deleteById()
+  // Verifies deletion logic for an existing StudySession
+  @Test
+  void shouldDeleteStudySessionByIdIfExists() {
+    when(studySessionRepository.existsById(expectedSessionId)).thenReturn(true);
+
+    studySessionService.deleteById(expectedSessionId);
+    verify(studySessionRepository, times(1)).deleteById(expectedSessionId);
+  }
+
+  // deleteById()
+  // Throws NotFoundException when attempting to delete non-existent StudySession
+  @Test
+  void shouldThrowExceptionWhenDeletingMissingStudySessionById() {
+    when(studySessionRepository.existsById(nonexistentSessionId)).thenReturn(false);
+
+    NotFoundException ex = assertThrows(NotFoundException.class,
+        () -> studySessionService.deleteById(nonexistentSessionId));
+    
+    assertEquals(format(CANNOT_FIND_BY_ID, nonexistentSessionId), ex.getMessage());
+    verify(studySessionRepository, times(1)).existsById(nonexistentSessionId);
+  }
+
+
 }
