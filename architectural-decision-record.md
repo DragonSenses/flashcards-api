@@ -1375,6 +1375,45 @@ class FlashcardMapperImplTest {
 
 ---
 
+# 📘 CategoryService Test Overview
+
+This document provides a coverage summary of unit tests for `CategoryServiceImpl`, emphasizing method reliability, input validation, and exception pathways.
+
+---
+
+## ✅ Coverage Summary
+
+| **Service Method**                         | **Tested Behaviors**                                                                                     | **Edge Cases / Exceptions**                                                    |
+|--------------------------------------------|-----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| `findAll()`                                 | Returns all categories in alphabetical order                                                              | Handles empty repository result                                                |
+| `findById(String)`                          | Returns category by valid ID                                                                              | Null, empty, and whitespace ID input throws `IllegalArgumentException`; missing ID throws `NotFoundException`; repository exception propagates |
+| `findByName(String)`                        | Retrieves category with matching name                                                                     | Null, empty, and whitespace name input throws `IllegalArgumentException`; missing name throws `NotFoundException` |
+| `createCategory(CategoryRequest)`           | Valid request with new name creates category and persists it                                              | Duplicate name throws `ConflictException`                                     |
+| `save(Category)`                            | Saves category entity to repository                                                                       | –                                                                              |
+| `deleteById(String)`                        | Deletes category when ID exists                                                                           | Missing ID throws `NotFoundException`                                         |
+| `existsById(String)`                        | Returns `true` if category exists                                                                         | –                                                                              |
+| `assertExistsById(String)`                 | Confirms category presence                                                                                 | Missing ID throws `NotFoundException`                                         |
+| `idFromCategoryWithName(String)`            | Retrieves category ID by name                                                                             | Missing name throws `NotFoundException`                                       |
+
+---
+
+## 🧪 Test Design Highlights
+
+- **Input Validation:** Explicit checks for null, empty, and whitespace inputs across name and ID
+- **Conflict Detection:** Tests for duplicate name detection via `existsByName` guard
+- **Mock Clarity:** Repository and mapper behavior is thoroughly mocked and asserted
+- **Exception Accuracy:** All thrown exceptions are asserted for type and message integrity
+- **Repository Interaction:** All queries and commands are verified for invocation frequency
+
+---
+
+## 🧱 Supporting Components
+
+- `CategoryMapper.categoryFrom(CategoryRequest)`: Verified indirectly through `createCategory()`; direct mapper tests could be added for resilience.
+- `CategoryRepository.findAllByOrderByNameAsc()`: Confirmed alphabetical sorting query triggers on retrieval.
+
+---
+
 # 🧪 DTO Validation Test Overview
 
 The app’s request DTOs include field-level validation to ensure data integrity before entering the service layer. Dedicated unit tests confirm that each constraint behaves correctly under common failure conditions, safeguarding against malformed input and reinforcing the API's contract.
