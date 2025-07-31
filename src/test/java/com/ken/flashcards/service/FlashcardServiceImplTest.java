@@ -43,6 +43,8 @@ public class FlashcardServiceImplTest {
   private final String expectedQuestion = "Why is the sky blue?";
   private final String expectedAnswer = "Rayleigh Scattering";
 
+  private static final String CANNOT_FIND_BY_ID = "Flashcard with ID '%s' not found";
+
   @BeforeEach
   void init() {
     this.flashcard = new Flashcard(expectedFlashcardId, expectedStudySessionId, expectedQuestion,

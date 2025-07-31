@@ -23,6 +23,8 @@ public class FlashcardServiceImpl extends ValidatingService implements Flashcard
   private final StudySessionService studySessionService;
   private final FlashcardMapper mapper;
 
+  private static final String CANNOT_FIND_BY_ID = "Flashcard with ID '%s' not found";
+
   @Autowired
   public FlashcardServiceImpl(FlashcardRepository repository,
       StudySessionService studySessionService, FlashcardMapper mapper) {
@@ -39,7 +41,7 @@ public class FlashcardServiceImpl extends ValidatingService implements Flashcard
   @Override
   public Flashcard findById(String id) {
     return repository.findById(id)
-        .orElseThrow(() -> new NotFoundException(format("Cannot find flashcard with id = %s", id)));
+        .orElseThrow(() -> new NotFoundException(format(CANNOT_FIND_BY_ID, id)));
   }
 
   @Override
