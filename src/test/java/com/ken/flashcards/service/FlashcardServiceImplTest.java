@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,6 +51,8 @@ public class FlashcardServiceImplTest {
   private final String expectedAnswer = "Rayleigh Scattering";
 
   private static final String CANNOT_FIND_BY_ID = "Flashcard with ID '%s' not found";
+  private static final String CANNOT_FIND_STUDY_SESSION_BY_ID =
+      "Study session with ID '%s' not found";
 
   @BeforeEach
   void init() {
@@ -122,4 +125,21 @@ public class FlashcardServiceImplTest {
     verify(flashcardRepository, times(1)).save(newFlashcard);
   }
 
+  // createFlashcard()
+  // Throws NotFoundException when creating a flashcard with a missing study session
+  @Test
+  void shouldThrowExceptionWhenCreatingFlashcardWithInvalidStudySessionId() {
+    String invalidStudySessionId = "invalid-id-123";
+    FlashcardRequest request =
+        new FlashcardRequest(invalidStudySessionId, expectedQuestion, expectedAnswer);
+
+    doThrow(new NotFoundException(format(CANNOT_FIND_STUDY_SESSION_BY_ID, invalidStudySessionId)))
+        .when(studySessionService).assertExistsById(invalidStudySessionId);
+
+    NotFoundException ex =
+        assertThrows(NotFoundException.class, () -> flashcardService.createFlashcard(request));
+    assertEquals(format(CANNOT_FIND_STUDY_SESSION_BY_ID, invalidStudySessionId), ex.getMessage());
+
+    verify(studySessionService, times(1)).assertExistsById(invalidStudySessionId);
+  }
 }
