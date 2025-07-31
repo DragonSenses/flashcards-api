@@ -12,11 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.ken.flashcards.dto.FlashcardRequest;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.mapper.FlashcardMapper;
 import com.ken.flashcards.model.Flashcard;
@@ -82,8 +84,8 @@ public class FlashcardServiceImplTest {
   void shouldThrowExceptionWhenFlashcardDoesNotExistById() {
     when(flashcardRepository.findById(expectedFlashcardId)).thenReturn(Optional.empty());
 
-    NotFoundException ex = assertThrows(NotFoundException.class, 
-        () -> flashcardService.findById(expectedFlashcardId));
+    NotFoundException ex =
+        assertThrows(NotFoundException.class, () -> flashcardService.findById(expectedFlashcardId));
 
     assertEquals(format(CANNOT_FIND_BY_ID, expectedFlashcardId), ex.getMessage());
     verify(flashcardRepository, times(1)).findById(expectedFlashcardId);
@@ -99,6 +101,25 @@ public class FlashcardServiceImplTest {
     assertEquals(Set.of(flashcard),
         flashcardService.findAllByStudySessionId(expectedStudySessionId));
     verify(flashcardRepository, times(1)).findAllByStudySessionId(expectedStudySessionId);
+  }
+
+  // createFlashcard()
+  // Verifies that a flashcard is created when the study session exists
+  @Test
+  void shouldCreateFlashcardWhenStudySessionExists() {
+    FlashcardRequest request =
+        new FlashcardRequest(expectedStudySessionId, expectedQuestion, expectedAnswer);
+    Flashcard newFlashcard =
+        new Flashcard("new-id", expectedStudySessionId, expectedQuestion, expectedAnswer);
+
+    doNothing().when(studySessionService).assertExistsById(expectedStudySessionId);
+    when(mapper.flashcardFrom(request)).thenReturn(newFlashcard);
+    when(flashcardRepository.save(newFlashcard)).thenReturn(newFlashcard);
+
+    assertEquals(newFlashcard, flashcardService.createFlashcard(request));
+    verify(mapper, times(1)).flashcardFrom(request);
+    verify(studySessionService, times(1)).assertExistsById(expectedStudySessionId);
+    verify(flashcardRepository, times(1)).save(newFlashcard);
   }
 
 }
