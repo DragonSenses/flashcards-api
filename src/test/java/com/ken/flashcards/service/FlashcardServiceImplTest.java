@@ -1,11 +1,17 @@
 package com.ken.flashcards.service;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ken.flashcards.mapper.FlashcardMapper;
@@ -44,5 +50,24 @@ public class FlashcardServiceImplTest {
     this.flashcards = List.of(flashcard);
   }
 
+  // findAll()
+  // Verifies that all flashcards are retrieved from the repository
+  @Test
+  void shouldReturnAllFlashcardsFromRepository() {
+    when(flashcardRepository.findAll()).thenReturn(flashcards);
+
+    assertEquals(flashcards, flashcardService.findAll());
+    verify(flashcardRepository, times(1)).findAll();
+  }
+
+  // findById()
+  // Ensures a valid flashcard ID returns the correct flashcard
+  @Test
+  void shouldReturnFlashcardByIdWhenPresent() {
+    when(flashcardRepository.findById(expectedFlashcardId)).thenReturn(Optional.of(flashcard));
+
+    assertEquals(flashcard, flashcardService.findById(expectedFlashcardId));
+    verify(flashcardRepository, times(1)).findById(expectedFlashcardId);
+  }
 
 }
