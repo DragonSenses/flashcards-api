@@ -11,8 +11,8 @@ Work in Progress:
 - [x] Mock SQL Test Data
 - [ ] Unit Tests
   - [x] CategoryService
+  - [x] StudySessionService
   - [ ] FlashcardService
-  - [ ] StudySessionService
   - [x] Mapper null-safe transformations
   - [x] DTO validation logic
 - [ ] Integration Tests
