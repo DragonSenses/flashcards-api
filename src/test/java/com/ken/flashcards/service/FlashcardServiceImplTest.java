@@ -20,6 +20,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_FLASHCARD_BY_ID;
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_STUDY_SESSION_BY_ID;
 import com.ken.flashcards.dto.FlashcardRequest;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.mapper.FlashcardMapper;
@@ -50,10 +52,6 @@ public class FlashcardServiceImplTest {
   private final String expectedStudySessionId = "session-002";
   private final String expectedQuestion = "Why is the sky blue?";
   private final String expectedAnswer = "Rayleigh Scattering";
-
-  private static final String CANNOT_FIND_BY_ID = "Flashcard with ID '%s' not found";
-  private static final String CANNOT_FIND_STUDY_SESSION_BY_ID =
-      "Study session with ID '%s' not found";
 
   @BeforeEach
   void init() {
@@ -91,7 +89,7 @@ public class FlashcardServiceImplTest {
     NotFoundException ex =
         assertThrows(NotFoundException.class, () -> flashcardService.findById(expectedFlashcardId));
 
-    assertEquals(format(CANNOT_FIND_BY_ID, expectedFlashcardId), ex.getMessage());
+    assertEquals(format(CANNOT_FIND_FLASHCARD_BY_ID, expectedFlashcardId), ex.getMessage());
     verify(flashcardRepository, times(1)).findById(expectedFlashcardId);
   }
 

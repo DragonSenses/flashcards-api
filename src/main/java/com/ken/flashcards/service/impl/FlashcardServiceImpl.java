@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_FLASHCARD_BY_ID;
 import com.ken.flashcards.dto.FlashcardRequest;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.mapper.FlashcardMapper;
@@ -23,8 +24,6 @@ public class FlashcardServiceImpl extends ValidatingService implements Flashcard
   private final StudySessionService studySessionService;
   private final FlashcardMapper mapper;
 
-  private static final String CANNOT_FIND_BY_ID = "Flashcard with ID '%s' not found";
-
   @Autowired
   public FlashcardServiceImpl(FlashcardRepository repository,
       StudySessionService studySessionService, FlashcardMapper mapper) {
@@ -41,7 +40,7 @@ public class FlashcardServiceImpl extends ValidatingService implements Flashcard
   @Override
   public Flashcard findById(String id) {
     return repository.findById(id)
-        .orElseThrow(() -> new NotFoundException(format(CANNOT_FIND_BY_ID, id)));
+        .orElseThrow(() -> new NotFoundException(format(CANNOT_FIND_FLASHCARD_BY_ID, id)));
   }
 
   @Override
