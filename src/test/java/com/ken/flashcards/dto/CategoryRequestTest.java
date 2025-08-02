@@ -13,6 +13,8 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+import static com.ken.flashcards.constants.ValidationMessages.NAME_REQUIRED;
+
 class CategoryRequestTest {
 
   private Validator validator;
@@ -30,7 +32,7 @@ class CategoryRequestTest {
 
     assertFalse(violations.isEmpty());
     assertEquals(1, violations.size());
-    assertEquals("name is required", violations.iterator().next().getMessage());
+    assertEquals(NAME_REQUIRED, violations.iterator().next().getMessage());
   }
 
   @Test
