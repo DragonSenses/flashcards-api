@@ -13,6 +13,9 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+import static com.ken.flashcards.constants.ValidationMessages.CATEGORY_ID_REQUIRED;
+import static com.ken.flashcards.constants.ValidationMessages.NAME_REQUIRED;
+
 class StudySessionRequestTest {
 
   private Validator validator;
@@ -29,7 +32,7 @@ class StudySessionRequestTest {
     Set<ConstraintViolation<StudySessionRequest>> violations = validator.validate(request);
 
     assertFalse(violations.isEmpty());
-    assertEquals("category id is required", violations.iterator().next().getMessage());
+    assertEquals(CATEGORY_ID_REQUIRED, violations.iterator().next().getMessage());
   }
 
   @Test
@@ -38,7 +41,7 @@ class StudySessionRequestTest {
     Set<ConstraintViolation<StudySessionRequest>> violations = validator.validate(request);
 
     assertFalse(violations.isEmpty());
-    assertEquals("name is required", violations.iterator().next().getMessage());
+    assertEquals(NAME_REQUIRED, violations.iterator().next().getMessage());
   }
 
   @Test
