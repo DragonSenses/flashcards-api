@@ -17,6 +17,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID;
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_NAME;
+import static com.ken.flashcards.constants.ExceptionMessages.CATEGORY_NAME_ALREADY_EXISTS;
 import static com.ken.flashcards.constants.ExceptionMessages.FIELD_MUST_NOT_BE_NULL_OR_EMPTY;
 import com.ken.flashcards.dto.CategoryRequest;
 import com.ken.flashcards.exception.ConflictException;
@@ -111,7 +114,7 @@ public class CategoryServiceImplTest {
     NotFoundException ex =
         assertThrows(NotFoundException.class, () -> categoryService.findById("1"));
 
-    assertEquals("Category with id '1' not found", ex.getMessage());
+    assertEquals(format(CANNOT_FIND_CATEGORY_BY_ID, "1"), ex.getMessage());
     verify(categoryRepository, times(1)).findById("1");
 
   }
@@ -153,7 +156,7 @@ public class CategoryServiceImplTest {
     NotFoundException ex =
         assertThrows(NotFoundException.class, () -> categoryService.findByName("Thermodynamics"));
 
-    assertEquals("Category with name 'Thermodynamics' not found", ex.getMessage());
+    assertEquals(format(CANNOT_FIND_CATEGORY_BY_NAME, "Thermodynamics"), ex.getMessage());
     verify(categoryRepository, times(1)).findByName("Thermodynamics");
   }
 
@@ -176,7 +179,7 @@ public class CategoryServiceImplTest {
     ConflictException ex = assertThrows(ConflictException.class,
         () -> categoryService.createCategory(new CategoryRequest("Astronomy")));
 
-    assertEquals("Category with name 'Astronomy' already exists", ex.getMessage());
+    assertEquals(format(CATEGORY_NAME_ALREADY_EXISTS, "Astronomy"), ex.getMessage());
     verify(categoryRepository, times(1)).existsByName("Astronomy");
   }
 
@@ -196,7 +199,7 @@ public class CategoryServiceImplTest {
     NotFoundException ex =
         assertThrows(NotFoundException.class, () -> categoryService.deleteById("1"));
 
-    assertEquals("Category with id '1' not found", ex.getMessage());
+    assertEquals(format(CANNOT_FIND_CATEGORY_BY_ID, "1"), ex.getMessage());
     verify(categoryRepository, times(1)).existsById("1");
   }
 
@@ -219,20 +222,20 @@ public class CategoryServiceImplTest {
   void throwsNotFoundExceptionWhenCategoryIdDoesNotExist() {
     when(categoryRepository.existsById("1")).thenReturn(false);
 
-    Throwable ex =
+    NotFoundException ex =
         assertThrows(NotFoundException.class, () -> categoryService.assertExistsById("1"));
 
-    assertEquals("Category with id '1' not found", ex.getMessage());
+    assertEquals(format(CANNOT_FIND_CATEGORY_BY_ID, "1"), ex.getMessage());
   }
 
   @Test
   void throwsNotFoundExceptionWhenCategoryNameDoesNotExist() {
     when(categoryRepository.findByName("English")).thenReturn(Optional.empty());
 
-    Throwable ex = assertThrows(NotFoundException.class,
+    NotFoundException ex = assertThrows(NotFoundException.class,
         () -> categoryService.idFromCategoryWithName("English"));
 
-    assertEquals("Category with name 'English' not found", ex.getMessage());
+    assertEquals(format(CANNOT_FIND_CATEGORY_BY_NAME, "English"), ex.getMessage());
     verify(categoryRepository, times(1)).findByName("English");
   }
 
