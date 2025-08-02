@@ -49,13 +49,24 @@ This document captures key architectural decisions made during the development o
 
 ---
 
+## ADR #006: Unit Testing for Service, DTO, and Mappers
+
+**Date**: 2025-07-27
+**Status**: Accepted
+**Context**: The project required reliable and maintainable unit tests to validate service logic, DTO constraints, and mapper transformations. Ensuring correctness and isolating failures was critical for long-term scalability.  
+**Decision**:
+Implement unit tests using JUnit 5 and Mockito for service-layer logic. Use Jakarta Bean Validation for DTO constraint testing and direct method assertions for mapper verification. Structure tests by domain and annotate with descriptive method names to reflect validation intent.  
+**Consequences**:
+Improved confidence in business logic and data integrity. Facilitates early detection of edge case failures and simplifies future refactoring. Encourages modular test design and consistent validation coverage across layers.
+
+---
+
 ## ADR #00: 
-**Date**: 2025-07-18
+**Date**: 2025-08-01
 **Status**: Proposed / Accepted / Deprecated
 **Context**: 
 **Decision**: 
 **Consequences**: 
-
 
 ## Development Approach
 
@@ -88,6 +99,7 @@ Use Spring Boot for rapid REST API scaffolding, along with:
 Create the following package structure under `src/main/java/com/ken/flashcards`:
 
 ```
+├── constants
 ├── controller
 ├── dto
 ├── error
