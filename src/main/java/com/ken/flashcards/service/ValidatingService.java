@@ -11,7 +11,7 @@ public abstract class ValidatingService {
   /**
    * Throws BadRequestException if the object is null.
    */
-  protected void assertNotNull(Object object) {
+  public void assertNotNull(Object object) {
     if (object == null) {
       throw new BadRequestException(REQUEST_BODY_NULL);
     }
@@ -22,7 +22,7 @@ public abstract class ValidatingService {
    * 
    * @param fieldName used in the exception message
    */
-  protected void assertNotBlank(String value, String fieldName) {
+  public void assertNotBlank(String value, String fieldName) {
     if (value == null || value.trim().isEmpty()) {
       throw new BadRequestException(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, fieldName));
     }
