@@ -2,7 +2,7 @@ package com.ken.flashcards.service;
 
 import static java.lang.String.format;
 
-import static com.ken.flashcards.constants.ExceptionMessages.FIELD_MUST_NOT_BE_BLANK;
+import static com.ken.flashcards.constants.ExceptionMessages.FIELD_MUST_NOT_BE_NULL_OR_EMPTY;
 import static com.ken.flashcards.constants.ExceptionMessages.REQUEST_BODY_NULL;
 import com.ken.flashcards.exception.BadRequestException;
 
@@ -24,7 +24,7 @@ public abstract class ValidatingService {
    */
   protected void assertNotBlank(String value, String fieldName) {
     if (value == null || value.trim().isEmpty()) {
-      throw new BadRequestException(format(FIELD_MUST_NOT_BE_BLANK, fieldName));
+      throw new BadRequestException(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, fieldName));
     }
   }
 
