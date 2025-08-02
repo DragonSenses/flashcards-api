@@ -13,6 +13,10 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+import static com.ken.flashcards.constants.ValidationMessages.STUDY_SESSION_ID_REQUIRED;
+import static com.ken.flashcards.constants.ValidationMessages.QUESTION_REQUIRED;
+import static com.ken.flashcards.constants.ValidationMessages.ANSWER_REQUIRED;
+
 class FlashcardRequestTest {
 
   private Validator validator;
@@ -29,7 +33,7 @@ class FlashcardRequestTest {
     Set<ConstraintViolation<FlashcardRequest>> violations = validator.validate(request);
 
     assertFalse(violations.isEmpty());
-    assertEquals("study session id is required", violations.iterator().next().getMessage());
+    assertEquals(STUDY_SESSION_ID_REQUIRED, violations.iterator().next().getMessage());
   }
 
   @Test
@@ -38,7 +42,7 @@ class FlashcardRequestTest {
     Set<ConstraintViolation<FlashcardRequest>> violations = validator.validate(request);
 
     assertFalse(violations.isEmpty());
-    assertEquals("question is required", violations.iterator().next().getMessage());
+    assertEquals(QUESTION_REQUIRED, violations.iterator().next().getMessage());
   }
 
   @Test
@@ -47,7 +51,7 @@ class FlashcardRequestTest {
     Set<ConstraintViolation<FlashcardRequest>> violations = validator.validate(request);
 
     assertFalse(violations.isEmpty());
-    assertEquals("answer is required", violations.iterator().next().getMessage());
+    assertEquals(ANSWER_REQUIRED, violations.iterator().next().getMessage());
   }
 
   @Test
