@@ -71,6 +71,26 @@ Create a `ExceptionMessages` constants class in the `com.ken.flashcards.constant
 **Consequences**:
 Reduces duplication and improves traceability of error messages. Simplifies updates to exception wording and ensures alignment between service logic and test expectations. Enhances readability and maintainability of service code.
 
+---
+
+## ADR #008: Centralized Validation Messages for DTOs
+
+**Date**: 2025-08-02
+**Status**: Accepted
+**Context**: DTO validation annotations used inline string messages, which were repetitive and error-prone across multiple request classes and tests.
+**Decision**:
+Introduce a `ValidationMessages` constants class to store reusable `@NotBlank`, `@Size`, and other constraint messages. Update DTO annotations and validation tests to reference these constants.  
+**Consequences**:
+Improves consistency and reduces duplication in validation logic. Enables easier updates to validation messages and ensures alignment between DTO constraints and test assertions. Promotes a cleaner and more maintainable validation strategy.
+
+---
+
+## ADR #009: Controller / Integration Tests
+**Date**: 2025-08-03
+**Status**: Proposed
+**Context**: 
+**Decision**: 
+**Consequences**: 
 
 ---
 
