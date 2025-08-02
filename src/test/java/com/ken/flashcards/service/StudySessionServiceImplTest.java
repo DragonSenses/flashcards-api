@@ -21,13 +21,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_STUDY_SESSION_BY_CATEGORY_ID;
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_STUDY_SESSION_BY_ID;
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_STUDY_SESSION_BY_NAME;
 import com.ken.flashcards.dto.StudySessionRequest;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.mapper.StudySessionMapper;
 import com.ken.flashcards.model.StudySession;
 import com.ken.flashcards.repository.StudySessionRepository;
 import com.ken.flashcards.service.impl.StudySessionServiceImpl;
-
 @ExtendWith(MockitoExtension.class)
 public class StudySessionServiceImplTest {
 
@@ -54,11 +56,6 @@ public class StudySessionServiceImplTest {
   private final String nonexistentSessionId = "session-neptune-999";
   private final String nonexistentSessionName = "Advanced Conjuration";
   private final String existingSessionName = "Engineering";
-
-
-  private static final String CANNOT_FIND_BY_ID = "Study session with ID '%s' not found";
-  private static final String CANNOT_FIND_BY_NAME = "Study session with name '%s' not found";
-  private static final String CANNOT_FIND_CATEGORY_BY_ID = "Study session with category ID '%s' not found";
 
   @BeforeEach
   void init() {
@@ -99,7 +96,7 @@ public class StudySessionServiceImplTest {
     NotFoundException ex = assertThrows(NotFoundException.class,
         () -> studySessionService.findById(expectedSessionId));
 
-    assertEquals(format(CANNOT_FIND_BY_ID, expectedSessionId), ex.getMessage());
+    assertEquals(format(CANNOT_FIND_STUDY_SESSION_BY_ID, expectedSessionId), ex.getMessage());
     verify(studySessionRepository, times(1)).findById(expectedSessionId);
   }
 
@@ -133,7 +130,7 @@ public class StudySessionServiceImplTest {
   // Ensures NotFoundException is thrown when creating a StudySession with a missing category
   @Test
   void shouldThrowExceptionWhenCreatingStudySessionWithInvalidCategory() {
-    doThrow(new NotFoundException(format(CANNOT_FIND_CATEGORY_BY_ID, expectedCategoryId)))
+    doThrow(new NotFoundException(format(CANNOT_FIND_STUDY_SESSION_BY_CATEGORY_ID, expectedCategoryId)))
         .when(categoryService).assertExistsById(expectedCategoryId);
 
     StudySessionRequest request = new StudySessionRequest(expectedCategoryId, expectedSessionName);
@@ -141,7 +138,7 @@ public class StudySessionServiceImplTest {
     NotFoundException ex = assertThrows(NotFoundException.class,
         () -> studySessionService.createStudySession(request));
 
-    assertEquals(format(CANNOT_FIND_CATEGORY_BY_ID, expectedCategoryId), ex.getMessage());
+    assertEquals(format(CANNOT_FIND_STUDY_SESSION_BY_CATEGORY_ID, expectedCategoryId), ex.getMessage());
     verify(categoryService, times(1)).assertExistsById(expectedCategoryId);
   }
 
@@ -194,7 +191,7 @@ public class StudySessionServiceImplTest {
     NotFoundException ex = assertThrows(NotFoundException.class,
         () -> studySessionService.deleteById(nonexistentSessionId));
     
-    assertEquals(format(CANNOT_FIND_BY_ID, nonexistentSessionId), ex.getMessage());
+    assertEquals(format(CANNOT_FIND_STUDY_SESSION_BY_ID, nonexistentSessionId), ex.getMessage());
     verify(studySessionRepository, times(1)).existsById(nonexistentSessionId);
   }
 
@@ -206,7 +203,7 @@ public class StudySessionServiceImplTest {
 
     NotFoundException ex = assertThrows(NotFoundException.class,
         () -> studySessionService.assertExistsById(nonexistentSessionId));
-    assertEquals(format(CANNOT_FIND_BY_ID, nonexistentSessionId), ex.getMessage());
+    assertEquals(format(CANNOT_FIND_STUDY_SESSION_BY_ID, nonexistentSessionId), ex.getMessage());
   }
 
   // assertExistsById()
@@ -239,6 +236,6 @@ public class StudySessionServiceImplTest {
     NotFoundException ex = assertThrows(NotFoundException.class,
         () -> studySessionService.idFromStudySessionWithName(nonexistentSessionName));
     
-    assertEquals(format(CANNOT_FIND_BY_NAME, nonexistentSessionName), ex.getMessage());
+    assertEquals(format(CANNOT_FIND_STUDY_SESSION_BY_NAME, nonexistentSessionName), ex.getMessage());
   }
 }
