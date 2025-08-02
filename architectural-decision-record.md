@@ -61,6 +61,19 @@ Improved confidence in business logic and data integrity. Facilitates early dete
 
 ---
 
+## ADR #007: Centralized Exception Messages for Service
+
+**Date**: 2025-08-01
+**Status**: Accepted
+**Context**: Exception messages across services were previously hardcoded and duplicated, leading to inconsistencies and maintenance overhead.
+**Decision**:
+Create a `ExceptionMessages` constants class in the `com.ken.flashcards.constants` package to centralize all exception messages used in service-layer logic and related tests. Reference these constants in `throw new` statements and test assertions to ensure consistency.
+**Consequences**:
+Reduces duplication and improves traceability of error messages. Simplifies updates to exception wording and ensures alignment between service logic and test expectations. Enhances readability and maintainability of service code.
+
+
+---
+
 ## ADR #00: 
 **Date**: 2025-08-01
 **Status**: Proposed / Accepted / Deprecated
