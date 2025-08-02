@@ -39,9 +39,7 @@ public class CategoryServiceImpl extends ValidatingService implements CategorySe
 
   @Override
   public Category findById(String id) {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalArgumentException("Id must not be null or empty");
-    }
+    assertNotBlank(id, "Category ID");
     return categoryRepository.findById(id)
         .orElseThrow(() -> new NotFoundException(format(CANNOT_FIND_CATEGORY_BY_ID, id)));
   }
@@ -79,9 +77,7 @@ public class CategoryServiceImpl extends ValidatingService implements CategorySe
 
   @Override
   public Category findByName(String name) {
-    if (name == null || name.trim().isEmpty()) {
-      throw new IllegalArgumentException("Name must not be null or empty");
-    }
+    assertNotBlank(name, "Category name");
     return categoryRepository.findByName(name)
         .orElseThrow(() -> new NotFoundException(format(CANNOT_FIND_CATEGORY_BY_NAME, name)));
   }
