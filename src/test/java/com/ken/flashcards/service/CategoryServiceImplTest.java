@@ -1,5 +1,6 @@
 package com.ken.flashcards.service;
 
+import static java.lang.String.format;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.ken.flashcards.constants.ExceptionMessages.FIELD_MUST_NOT_BE_NULL_OR_EMPTY;
 import com.ken.flashcards.dto.CategoryRequest;
 import com.ken.flashcards.exception.ConflictException;
 import com.ken.flashcards.exception.NotFoundException;
@@ -41,6 +43,9 @@ public class CategoryServiceImplTest {
   private Category category;
 
   private CategoryRequest request;
+
+  private static final String CATEGORY_ID = "Category ID";
+  private static final String CATEGORY_NAME = "Category name";
 
   @BeforeEach
   void init() {
@@ -74,21 +79,21 @@ public class CategoryServiceImplTest {
   void findByIdThrowsExceptionWhenIdIsNull() {
     IllegalArgumentException ex =
         assertThrows(IllegalArgumentException.class, () -> categoryService.findById(null));
-    assertEquals("Id must not be null or empty", ex.getMessage());
+    assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_ID), ex.getMessage());
   }
 
   @Test
   void findByIdThrowsExceptionWhenIdIsEmpty() {
     IllegalArgumentException ex =
         assertThrows(IllegalArgumentException.class, () -> categoryService.findById(""));
-    assertEquals("Id must not be null or empty", ex.getMessage());
+    assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_ID), ex.getMessage());
   }
 
   @Test
   void findByIdThrowsExceptionWhenIdIsWhitespace() {
     IllegalArgumentException ex =
         assertThrows(IllegalArgumentException.class, () -> categoryService.findById("   "));
-    assertEquals("Id must not be null or empty", ex.getMessage());
+    assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_ID), ex.getMessage());
   }
 
   @Test
@@ -124,21 +129,21 @@ public class CategoryServiceImplTest {
   void findByNameThrowsExceptionWhenNameIsNull() {
     IllegalArgumentException ex =
         assertThrows(IllegalArgumentException.class, () -> categoryService.findByName(null));
-    assertEquals("Name must not be null or empty", ex.getMessage());
+    assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_NAME), ex.getMessage());
   }
 
   @Test
   void findByNameThrowsExceptionWhenNameIsEmpty() {
     IllegalArgumentException ex =
         assertThrows(IllegalArgumentException.class, () -> categoryService.findByName(""));
-    assertEquals("Name must not be null or empty", ex.getMessage());
+    assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_NAME), ex.getMessage());
   }
 
   @Test
   void findByNameThrowsExceptionWhenNameIsWhitespace() {
     IllegalArgumentException ex =
         assertThrows(IllegalArgumentException.class, () -> categoryService.findByName("   "));
-    assertEquals("Name must not be null or empty", ex.getMessage());
+    assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_NAME), ex.getMessage());
   }
 
   @Test
