@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID;
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_NAME;
+import static com.ken.flashcards.constants.ExceptionMessages.CATEGORY_NAME_ALREADY_EXISTS;
 import com.ken.flashcards.dto.CategoryRequest;
 import com.ken.flashcards.exception.ConflictException;
 import com.ken.flashcards.exception.NotFoundException;
@@ -19,10 +22,6 @@ import com.ken.flashcards.service.ValidatingService;
 @Service
 @Transactional
 public class CategoryServiceImpl extends ValidatingService implements CategoryService {
-
-  private static final String CANNOT_FIND_BY_ID = "Category with id '%s' not found";
-  private static final String CANNOT_FIND_BY_NAME = "Category with name '%s' not found";
-  private static final String ALREADY_EXISTS_BY_NAME = "Category with name '%s' already exists";
 
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
@@ -44,7 +43,7 @@ public class CategoryServiceImpl extends ValidatingService implements CategorySe
       throw new IllegalArgumentException("Id must not be null or empty");
     }
     return categoryRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException(format(CANNOT_FIND_BY_ID, id)));
+        .orElseThrow(() -> new NotFoundException(format(CANNOT_FIND_CATEGORY_BY_ID, id)));
   }
 
   @Override
@@ -74,7 +73,7 @@ public class CategoryServiceImpl extends ValidatingService implements CategorySe
   @Override
   public void assertExistsById(String id) {
     if (!existsById(id)) {
-      throw new NotFoundException(format(CANNOT_FIND_BY_ID, id));
+      throw new NotFoundException(format(CANNOT_FIND_CATEGORY_BY_ID, id));
     }
   }
 
@@ -84,7 +83,7 @@ public class CategoryServiceImpl extends ValidatingService implements CategorySe
       throw new IllegalArgumentException("Name must not be null or empty");
     }
     return categoryRepository.findByName(name)
-        .orElseThrow(() -> new NotFoundException(format(CANNOT_FIND_BY_NAME, name)));
+        .orElseThrow(() -> new NotFoundException(format(CANNOT_FIND_CATEGORY_BY_NAME, name)));
   }
 
   @Override
@@ -104,7 +103,7 @@ public class CategoryServiceImpl extends ValidatingService implements CategorySe
 
   private void assertDoesNotExistByName(String name) {
     if (categoryRepository.existsByName(name)) {
-      throw new ConflictException(format(ALREADY_EXISTS_BY_NAME, name));
+      throw new ConflictException(format(CATEGORY_NAME_ALREADY_EXISTS, name));
     }
   }
 
