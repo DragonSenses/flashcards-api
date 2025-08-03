@@ -1,5 +1,5 @@
 # flashcards-api
-A modular and well-documented RESTful backend for managing flashcard-based study sessions. Built with Java and Spring Boot, featuring OpenAPI documentation via Swagger UI.
+A modular and well-documented RESTful backend for managing flashcard-based study sessions. Built with Java 17, Spring Boot, and SQL, with OpenAPI docs via Swagger UI. Tested with JUnit, Mockito, and MockMvc. Designed with layered architecture and ADR-backed decisions.
 
 Work in Progress:
 - [x] DTO
@@ -55,6 +55,7 @@ The diagram below illustrates how exceptions propagate through the service layer
 - **Data Persistence:** MySQL
 - **Documentation:** SpringDoc OpenAPI, Swagger UI
 - **Build Tool:** Maven
+- **Testing Stack:** JUnit, Mockito, MockMvc
 
 # Prerequisites
 1. Java 17+ (JDK installed and available in PATH)  
