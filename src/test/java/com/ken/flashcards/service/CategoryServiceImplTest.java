@@ -58,6 +58,8 @@ public class CategoryServiceImplTest {
     this.categories = List.of(category);
   }
 
+  // findAll()
+  // Verifies that all categories are retrieved in ascending order by name
   @Test
   void findAllOrderedByName() {
     when(categoryRepository.findAllByOrderByNameAsc()).thenReturn(categories);
@@ -65,6 +67,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).findAllByOrderByNameAsc();
   }
 
+  // findAll()
+  // Verifies that an empty list is returned when no categories exist
   @Test
   void returnEmptyListWhenNoCategoriesExist() {
     when(categoryRepository.findAllByOrderByNameAsc()).thenReturn(List.of());
@@ -72,6 +76,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).findAllByOrderByNameAsc();
   }
 
+  // findById()
+  // Verifies that a category is retrieved by its ID
   @Test
   void findCategoryById() {
     when(categoryRepository.findById("1")).thenReturn(Optional.of(category));
@@ -79,6 +85,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).findById("1");
   }
 
+  // findById()
+  // Verifies that BadRequestException is thrown when ID is null
   @Test
   void findByIdThrowsExceptionWhenIdIsNull() {
     BadRequestException ex =
@@ -86,6 +94,8 @@ public class CategoryServiceImplTest {
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_ID), ex.getMessage());
   }
 
+  // findById()
+  // Verifies that BadRequestException is thrown when ID is empty
   @Test
   void findByIdThrowsExceptionWhenIdIsEmpty() {
     BadRequestException ex =
@@ -93,6 +103,8 @@ public class CategoryServiceImplTest {
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_ID), ex.getMessage());
   }
 
+  // findById()
+  // Verifies that BadRequestException is thrown when ID is whitespace
   @Test
   void findByIdThrowsExceptionWhenIdIsWhitespace() {
     BadRequestException ex =
@@ -100,6 +112,8 @@ public class CategoryServiceImplTest {
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_ID), ex.getMessage());
   }
 
+  // findById()
+  // Verifies that repository exceptions are propagated
   @Test
   void findByIdPropagatesRepositoryException() {
     when(categoryRepository.findById("1")).thenThrow(new RuntimeException("DB unavailable"));
@@ -108,6 +122,8 @@ public class CategoryServiceImplTest {
     assertEquals("DB unavailable", ex.getMessage());
   }
 
+  // findById()
+  // Verifies that NotFoundException is thrown when category does not exist
   @Test
   void findByIdThrowsExceptionWhenCategoryDoesNotExist() {
     when(categoryRepository.findById("1")).thenReturn(Optional.empty());
@@ -120,6 +136,8 @@ public class CategoryServiceImplTest {
 
   }
 
+  // findByName()
+  // Verifies that a category is retrieved by its name
   @Test
   void findCategoryByName() {
     when(categoryRepository.findByName("Thermodynamics"))
@@ -129,6 +147,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).findByName("Thermodynamics");
   }
 
+  // findByName()
+  // Verifies that BadRequestException is thrown when name is null
   @Test
   void findByNameThrowsExceptionWhenNameIsNull() {
     BadRequestException ex =
@@ -136,6 +156,8 @@ public class CategoryServiceImplTest {
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_NAME), ex.getMessage());
   }
 
+  // findByName()
+  // Verifies that BadRequestException is thrown when name is empty
   @Test
   void findByNameThrowsExceptionWhenNameIsEmpty() {
     BadRequestException ex =
@@ -143,6 +165,8 @@ public class CategoryServiceImplTest {
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_NAME), ex.getMessage());
   }
 
+  // findByName()
+  // Verifies that BadRequestException is thrown when name is whitespace
   @Test
   void findByNameThrowsExceptionWhenNameIsWhitespace() {
     BadRequestException ex =
@@ -150,6 +174,8 @@ public class CategoryServiceImplTest {
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_NAME), ex.getMessage());
   }
 
+  // findByName()
+  // Verifies that NotFoundException is thrown when category does not exist
   @Test
   void findByNameThrowsExceptionWhenCategoryDoesNotExist() {
     when(categoryRepository.findByName("Thermodynamics")).thenReturn(Optional.empty());
@@ -161,6 +187,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).findByName("Thermodynamics");
   }
 
+  // createCategory()
+  // Verifies that a new category is created when name is unique
   @Test
   void createCategory() {
     when(categoryRepository.existsByName(request.getName())).thenReturn(false);
@@ -173,6 +201,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).save(category);
   }
 
+  // createCategory()
+  // Verifies that ConflictException is thrown when category name already exists
   @Test
   void createCategoryWithDuplicateNameThrowsConflictException() {
     when(categoryRepository.existsByName("Astronomy")).thenReturn(true);
@@ -184,7 +214,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).existsByName("Astronomy");
   }
 
-
+  // deleteById()
+  // Verifies that a category is deleted when ID exists
   @Test
   void deletesCategoryWhenIdExists() {
     when(categoryRepository.existsById("1")).thenReturn(true);
@@ -193,6 +224,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).deleteById("1");
   }
 
+  // deleteById()
+  // Verifies that NotFoundException is thrown when category ID does not exist
   @Test
   void throwExceptionWhenDeletingNonExistentCategory() {
     when(categoryRepository.existsById("1")).thenReturn(false);
@@ -204,6 +237,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).existsById("1");
   }
 
+  // save()
+  // Verifies that a category is saved successfully
   @Test
   void savesCategorySuccessfully() {
     when(categoryRepository.save(category)).thenReturn(category);
@@ -211,6 +246,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).save(category);
   }
 
+  // existsById()
+  // Verifies that true is returned when category exists by ID
   @Test
   void returnsTrueWhenCategoryExistsById() {
     when(categoryRepository.existsById("1")).thenReturn(true);
@@ -219,6 +256,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).existsById("1");
   }
 
+  // assertExistsById()
+  // Verifies that NotFoundException is thrown when category ID does not exist
   @Test
   void throwsNotFoundExceptionWhenCategoryIdDoesNotExist() {
     when(categoryRepository.existsById("1")).thenReturn(false);
@@ -229,6 +268,8 @@ public class CategoryServiceImplTest {
     assertEquals(format(CANNOT_FIND_CATEGORY_BY_ID, "1"), ex.getMessage());
   }
 
+  // idFromCategoryWithName()
+  // Verifies that NotFoundException is thrown when category name does not exist
   @Test
   void throwsNotFoundExceptionWhenCategoryNameDoesNotExist() {
     when(categoryRepository.findByName("English")).thenReturn(Optional.empty());
@@ -240,6 +281,8 @@ public class CategoryServiceImplTest {
     verify(categoryRepository, times(1)).findByName("English");
   }
 
+  // idFromCategoryWithName()
+  // Verifies that category ID is returned when name exists
   @Test
   void returnsIdWhenCategoryNameExists() {
     when(categoryRepository.findByName("History"))
