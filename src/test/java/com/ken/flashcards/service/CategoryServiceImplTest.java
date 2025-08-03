@@ -22,6 +22,7 @@ import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGOR
 import static com.ken.flashcards.constants.ExceptionMessages.CATEGORY_NAME_ALREADY_EXISTS;
 import static com.ken.flashcards.constants.ExceptionMessages.FIELD_MUST_NOT_BE_NULL_OR_EMPTY;
 import com.ken.flashcards.dto.CategoryRequest;
+import com.ken.flashcards.exception.BadRequestException;
 import com.ken.flashcards.exception.ConflictException;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.mapper.CategoryMapper;
@@ -80,22 +81,22 @@ public class CategoryServiceImplTest {
 
   @Test
   void findByIdThrowsExceptionWhenIdIsNull() {
-    IllegalArgumentException ex =
-        assertThrows(IllegalArgumentException.class, () -> categoryService.findById(null));
+    BadRequestException ex =
+        assertThrows(BadRequestException.class, () -> categoryService.findById(null));
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_ID), ex.getMessage());
   }
 
   @Test
   void findByIdThrowsExceptionWhenIdIsEmpty() {
-    IllegalArgumentException ex =
-        assertThrows(IllegalArgumentException.class, () -> categoryService.findById(""));
+    BadRequestException ex =
+        assertThrows(BadRequestException.class, () -> categoryService.findById(""));
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_ID), ex.getMessage());
   }
 
   @Test
   void findByIdThrowsExceptionWhenIdIsWhitespace() {
-    IllegalArgumentException ex =
-        assertThrows(IllegalArgumentException.class, () -> categoryService.findById("   "));
+    BadRequestException ex =
+        assertThrows(BadRequestException.class, () -> categoryService.findById("   "));
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_ID), ex.getMessage());
   }
 
@@ -130,22 +131,22 @@ public class CategoryServiceImplTest {
 
   @Test
   void findByNameThrowsExceptionWhenNameIsNull() {
-    IllegalArgumentException ex =
-        assertThrows(IllegalArgumentException.class, () -> categoryService.findByName(null));
+    BadRequestException ex =
+        assertThrows(BadRequestException.class, () -> categoryService.findByName(null));
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_NAME), ex.getMessage());
   }
 
   @Test
   void findByNameThrowsExceptionWhenNameIsEmpty() {
-    IllegalArgumentException ex =
-        assertThrows(IllegalArgumentException.class, () -> categoryService.findByName(""));
+    BadRequestException ex =
+        assertThrows(BadRequestException.class, () -> categoryService.findByName(""));
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_NAME), ex.getMessage());
   }
 
   @Test
   void findByNameThrowsExceptionWhenNameIsWhitespace() {
-    IllegalArgumentException ex =
-        assertThrows(IllegalArgumentException.class, () -> categoryService.findByName("   "));
+    BadRequestException ex =
+        assertThrows(BadRequestException.class, () -> categoryService.findByName("   "));
     assertEquals(format(FIELD_MUST_NOT_BE_NULL_OR_EMPTY, CATEGORY_NAME), ex.getMessage());
   }
 
