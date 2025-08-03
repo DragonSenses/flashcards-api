@@ -1546,3 +1546,47 @@ This document outlines the unit test coverage for `StudySessionServiceImpl`, foc
 - `StudySessionMapperTest`: Validates transformation logic from request DTO to domain entity, including ID generation
 - `CategoryService.assertExistsById()`: Covered implicitly via service invocation and exception handling
 
+---
+
+# 🧱 Constants Overview
+
+Created constants for `ExceptionMessages` and `ValidationMessages` to centralize reusable string literals across service and DTO layers. This improves consistency, maintainability, and test alignment.
+
+---
+
+### 📦 Package Location
+
+```text
+com.ken.flashcards.constants
+```
+
+- `ExceptionMessages.java`: Contains standardized exception messages used across service classes and related tests.
+- `ValidationMessages.java`: Contains reusable validation messages for DTO annotations and validation tests.
+
+---
+
+### 🧩 Design Principles / Insights
+
+- **Centralization**: Avoids duplication of string literals across services, DTOs, and tests.
+- **Consistency**: Ensures uniform messaging for validation and exception handling, reducing semantic drift.
+- **Maintainability**: Enables single-point updates to messages without touching multiple classes.
+- **Test Alignment**: Facilitates direct reference in unit tests, improving assertion clarity and reducing fragility.
+- **Encapsulation**: Constants are declared `public static final` within `final` utility classes to prevent instantiation and modification.
+
+---
+
+## 🧠 Design Notes
+
+- Constants are grouped by domain (e.g., `CATEGORY_NOT_FOUND`, `NAME_REQUIRED`) to improve discoverability.
+- Naming follows the pattern: `ENTITY_ACTION_CONDITION` (e.g., `CATEGORY_NOT_FOUND`, `FLASHCARD_QUESTION_REQUIRED`) for semantic clarity.
+- Used in:
+  - `@NotBlank`, `@Size`, and other validation annotations in DTOs
+  - `throw new` statements in service logic
+  - `assertEquals(...)` in unit and integration tests
+- Classes are annotated with `@SuppressWarnings("utility-class")` if static analysis tools flag them.
+- Future extensions may include:
+  - `ControllerMessages` for HTTP-level error responses
+  - `LogMessages` for standardized logging patterns
+
+---
+
