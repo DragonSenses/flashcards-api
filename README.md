@@ -9,14 +9,18 @@ Work in Progress:
 - [x] Service
 - [x] Controller
 - [x] Mock SQL Test Data
-- [ ] Unit Tests
+- [x] Unit Tests
   - [x] CategoryService
   - [x] StudySessionService
-  - [ ] FlashcardService
+  - [x] FlashcardService
   - [x] Mapper null-safe transformations
   - [x] DTO validation logic
-- [ ] Integration Tests
-  - [ ] Controller / Service / Repo flow
+- [ ] Controller Tests (`@WebMvcTest`, `MockMvc`)
+- [ ] Integration Tests (`@SpringBootTest`)
+  - [ ] Swagger UI
+  - [ ] Service to Repository Integration
+  - [ ] Controller to Service Integration
+  - [ ] etc. (Validation, Exception, DTO Mapper)
 
 # High Level Architecture
 
