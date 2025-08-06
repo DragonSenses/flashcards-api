@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID;
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_NAME;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.model.Category;
 import com.ken.flashcards.service.CategoryService;
@@ -79,6 +80,39 @@ public class CategoryControllerTest extends ControllerTestBase {
     mockMvc.perform(get(categoriesPath + "/" + id).contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound())
         .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException))
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
+
+  // findByName(String name)
+  // Should return category details when a valid name is provided
+  @Test
+  void shouldReturnCategoryDetailsWhenFoundByName() throws Exception {
+    // Arrange
+    when(categoryService.findByName(expectedCategoryName))
+        .thenReturn(new Category(expectedCategoryId, expectedCategoryName));
+
+    // Act & Assert
+    mockMvc
+        .perform(get(categoriesPath + "/details?name=" + expectedCategoryName)
+            .contentType(APPLICATION_JSON))
+        .andExpect(status().isOk()).andExpect(content()
+            .json("{'id':'" + expectedCategoryId + "','name':'" + expectedCategoryName + "'}"));
+  }
+
+  // findByName(String name)
+  // Should return 404 when attempting to retrieve a non-existent category by name
+  @Test
+  void shouldReturn404WhenCategoryIsNotFoundByName() throws Exception {
+    // Arrange
+    String errorMessage = format(CANNOT_FIND_CATEGORY_BY_NAME, expectedCategoryName);
+    when(categoryService.findByName(expectedCategoryName))
+        .thenThrow(new NotFoundException(errorMessage));
+
+    // Act & Assert
+    mockMvc
+        .perform(get(categoriesPath + "/details?name=" + expectedCategoryName)
+            .contentType(APPLICATION_JSON))
+        .andExpect(status().isNotFound())
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 }
