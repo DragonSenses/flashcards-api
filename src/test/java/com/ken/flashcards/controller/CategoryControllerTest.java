@@ -1,7 +1,9 @@
 package com.ken.flashcards.controller;
 
+import static java.lang.String.format;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.when;
@@ -15,6 +17,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID;
+import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.model.Category;
 import com.ken.flashcards.service.CategoryService;
 
@@ -60,5 +64,21 @@ public class CategoryControllerTest extends ControllerTestBase {
     mockMvc.perform(get(categoriesPath + "/" + expectedCategoryId).contentType(APPLICATION_JSON))
         .andExpect(status().isOk()).andExpect(
             content().json(serialize(new Category(expectedCategoryId, expectedCategoryName))));
+  }
+
+  // findById(String id)
+  // Should return 404 when attempting to retrieve a non-existent category by ID
+  @Test
+  void shouldReturn404WhenCategoryIsNotFoundById() throws Exception {
+    // Arrange
+    String id = "1";
+    String errorMessage = format(CANNOT_FIND_CATEGORY_BY_ID, id);
+    when(categoryService.findById(id)).thenThrow(new NotFoundException(errorMessage));
+
+    // Act & Assert
+    mockMvc.perform(get(categoriesPath + "/" + id).contentType(APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException))
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 }
