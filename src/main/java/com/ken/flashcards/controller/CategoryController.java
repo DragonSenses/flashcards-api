@@ -72,15 +72,6 @@ public class CategoryController implements ResponseHandler {
     return ok(categoryService.findByName(name));
   }
 
-  @Operation(summary = "Create a category")
-  @ApiResponse(responseCode = "201", description = "Category created",
-      content = @Content(mediaType = "application/json",
-          schema = @Schema(implementation = Category.class)))
-  @PostMapping
-  public ResponseEntity<Category> create(@RequestBody CategoryRequest request) {
-    return created(categoryService.createCategory(request));
-  }
-
   @Operation(summary = "Delete a category by ID")
   @ApiResponse(responseCode = "204", description = "Category deleted")
   @ApiResponse(responseCode = "404", description = "Category does not exist",
