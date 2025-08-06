@@ -1590,3 +1590,60 @@ com.ken.flashcards.constants
 
 ---
 
+## 🧪 Controller Testing Overview
+
+### 🎯 Purpose
+
+Controller tests validate the behavior of REST endpoints exposed by Spring `@RestController` classes. They ensure:
+
+- Correct HTTP status codes and response bodies
+- Proper delegation to service-layer methods
+- Accurate request validation and error handling
+- Compliance with OpenAPI/Swagger documentation (where applicable)
+
+These tests use `@WebMvcTest` and `MockMvc` to simulate HTTP requests without starting the full application context.
+
+---
+
+### 🧱 Structure
+
+Each controller test class targets a specific controller (e.g. `CategoryControllerTest`) and follows this structure:
+
+- **Setup**: Use `@WebMvcTest` to isolate the controller
+- **Mocking**: Inject service dependencies using `@MockitoBean`
+- **Execution**: Simulate HTTP requests using `MockMvc`
+- **Verification**: Assert status codes, response content, and error handling
+
+---
+
+### 🧰 Shared Utilities: `ControllerTestBase`
+
+`ControllerTestBase` is an abstract base class for controller-layer tests. It provides reusable JSON utilities to simplify response verification and payload handling.
+
+#### 🔧 Features
+
+- `serialize(Object obj)`: Converts Java objects to JSON strings for response comparison
+- `deserialize(String json, Class<T> type)`: Converts JSON strings back to Java objects for validation
+
+#### 📁 Location
+
+Located in `/test/.../flashcards/controller/`, scoped to controller tests for discoverability and cohesion.
+
+#### 🧪 Usage Example
+
+```java
+.andExpect(content().json(serialize(Set.of(category))));
+```
+
+---
+
+### ✅ Best Practices
+
+- Use `MockMvc` for precise control over request/response behavior
+- Mock service-layer dependencies to isolate controller logic
+- Validate edge cases (e.g. invalid input, missing resources)
+- Leverage `ControllerTestBase` for clean and consistent JSON handling
+- Align test paths and payloads with OpenAPI specs
+
+---
+
