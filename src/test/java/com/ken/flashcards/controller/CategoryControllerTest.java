@@ -49,4 +49,16 @@ public class CategoryControllerTest extends ControllerTestBase {
     mockMvc.perform(get(categoriesPath).contentType(APPLICATION_JSON)).andExpect(status().isOk())
         .andExpect(content().json(serialize(Set.of(category))));
   }
+
+  // findById(String id)
+  // Verifies that GET /categories/{id} returns the correct category with HTTP 200 and expected JSON
+  @Test
+  void shouldReturnCategoryByIdSuccessfully() throws Exception {
+    when(categoryService.findById(expectedCategoryId))
+        .thenReturn(new Category(expectedCategoryId, expectedCategoryName));
+
+    mockMvc.perform(get(categoriesPath + "/" + expectedCategoryId).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk()).andExpect(
+            content().json(serialize(new Category(expectedCategoryId, expectedCategoryName))));
+  }
 }
