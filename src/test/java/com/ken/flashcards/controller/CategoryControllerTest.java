@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -235,5 +236,17 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(status().isNoContent());
 
     verify(categoryService, times(1)).deleteById(categoryIdToDelete);
+  }
+
+  @DisplayName("DELETE /categories/{id} - should return 404 when category ID is not found")
+  @Test
+  void shouldReturn404WhenDeletingNonExistentCategory() throws Exception {
+    String nonExistentId = "non-existent-id";
+    String errorMessage = format(CANNOT_FIND_CATEGORY_BY_ID, nonExistentId);
+
+    doThrow(new NotFoundException(errorMessage)).when(categoryService).deleteById(nonExistentId);
+
+    mockMvc.perform(delete(categoriesPath + "/" + nonExistentId)).andExpect(status().isNotFound())
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 }
