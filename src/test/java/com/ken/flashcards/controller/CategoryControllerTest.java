@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -261,6 +262,32 @@ public class CategoryControllerTest extends ControllerTestBase {
 
     mockMvc.perform(put(categoriesPath).contentType(APPLICATION_JSON).content(invalidRequestJson))
         .andExpect(status().isBadRequest()).andExpect(content().json(expectedJson));
+  }
+
+  @DisplayName("PUT /categories - should return 409 when name already exists")
+  @Test
+  void shouldReturn409WhenPutRequestHasDuplicateName() throws Exception {
+    String duplicateNameJson = String.format("""
+        {
+            "id": "1",
+            "name": "%s"
+        }
+        """, expectedCategoryName);
+
+    // Recall that /src/.../flashcard/error/ErrorResponse builds the error response
+    String expectedJson = String.format("""
+        {
+            "error": "%s"
+        }
+        """, format(CATEGORY_NAME_ALREADY_EXISTS, expectedCategoryName));
+
+    // Arrange: mock save to throw ConflictException due to duplicate name
+    doThrow(new ConflictException(format(CATEGORY_NAME_ALREADY_EXISTS, expectedCategoryName)))
+        .when(categoryService).save(any(Category.class));
+
+    // Act & Assert
+    mockMvc.perform(put(categoriesPath).contentType(APPLICATION_JSON).content(duplicateNameJson))
+        .andExpect(status().isConflict()).andExpect(content().json(expectedJson));
   }
 
   @DisplayName("DELETE /categories/{id} - should delete category by ID (204 No Content)")
