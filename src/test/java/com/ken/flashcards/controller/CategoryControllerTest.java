@@ -16,6 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -158,5 +159,34 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(result -> assertTrue(result.getResolvedException() instanceof ConflictException))
         .andExpect(content().json(expectedJson));
   }
+
+  @DisplayName("PUT /categories - should create new category when ID does not exist (201 Created)")
+  @Test
+  void shouldCreateCategoryWhenIdDoesNotExist() throws Exception {
+    String newId = "1";
+    String newName = "Hip-hop Music";
+
+    Category newCategory = new Category(newId, newName);
+    when(categoryService.existsById(newId)).thenReturn(false);
+    when(categoryService.save(newCategory)).thenReturn(newCategory);
+
+    String requestBody = """
+        {
+            "id": "1",
+            "name": "Hip-hop Music"
+        }
+        """;
+
+    String expectedResponseBody = """
+        {
+            "id": "1",
+            "name": "Hip-hop Music"
+        }
+        """;
+
+    mockMvc.perform(put(categoriesPath).contentType(APPLICATION_JSON).content(requestBody))
+        .andExpect(status().isCreated()).andExpect(content().json(expectedResponseBody));
+  }
+
 
 }
