@@ -50,8 +50,7 @@ public class CategoryControllerTest extends ControllerTestBase {
     this.category = new Category(expectedCategoryId, expectedCategoryName);
   }
 
-  // findAll()
-  // Verifies that GET /categories returns all categories with HTTP 200 and correct JSON response
+  @DisplayName("GET /categories - should return all categories with HTTP 200 and correct JSON response")
   @Test
   void shouldReturnAllCategoriesSuccessfully() throws Exception {
     when(categoryService.findAll()).thenReturn(Set.of(category));
@@ -60,8 +59,7 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(content().json(serialize(Set.of(category))));
   }
 
-  // findById(String id)
-  // Verifies that GET /categories/{id} returns the correct category with HTTP 200 and expected JSON
+  @DisplayName("GET /categories/{id} - should return the correct category with HTTP 200 and expected JSON")
   @Test
   void shouldReturnCategoryByIdSuccessfully() throws Exception {
     when(categoryService.findById(expectedCategoryId))
@@ -72,8 +70,7 @@ public class CategoryControllerTest extends ControllerTestBase {
             content().json(serialize(new Category(expectedCategoryId, expectedCategoryName))));
   }
 
-  // findById(String id)
-  // Should return 404 when attempting to retrieve a non-existent category by ID
+  @DisplayName("GET /categories/{id} - should return 404 when category is not found by ID")
   @Test
   void shouldReturn404WhenCategoryIsNotFoundById() throws Exception {
     // Arrange
@@ -88,8 +85,7 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 
-  // findByName(String name)
-  // Should return category details when a valid name is provided
+  @DisplayName("GET /categories/details?name=Music - should return category details when found by name")
   @Test
   void shouldReturnCategoryDetailsWhenFoundByName() throws Exception {
     // Arrange
@@ -104,8 +100,7 @@ public class CategoryControllerTest extends ControllerTestBase {
             .json("{'id':'" + expectedCategoryId + "','name':'" + expectedCategoryName + "'}"));
   }
 
-  // findByName(String name)
-  // Should return 404 when attempting to retrieve a non-existent category by name
+  @DisplayName("GET /categories/details?name=Music - should return 404 when category is not found by name")
   @Test
   void shouldReturn404WhenCategoryIsNotFoundByName() throws Exception {
     // Arrange
@@ -121,8 +116,6 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 
-  // createCategory(CategoryRequest request)
-  // Should return 201 Created with category details when a valid request is submitted
   @Test
   @DisplayName("POST /categories - should create category when request is valid")
   void shouldCreateCategoryWhenRequestIsValid() throws Exception {
@@ -143,17 +136,15 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(status().isCreated()).andExpect(content().json(expectedResponseBody));
   }
 
-  // createCategory(CategoryRequest request)
-  // Should return 400 Bad Request when the request body is empty
-  @Test
   @DisplayName("POST /categories - should return 400 when request body is empty")
+  @Test
   void shouldReturn400WhenCreateCategoryRequestBodyIsEmpty() throws Exception {
     mockMvc.perform(post(categoriesPath).contentType(APPLICATION_JSON).content(""))
         .andExpect(status().isBadRequest());
   }
 
-  @Test
   @DisplayName("POST /categories - should return 409 when category name already exists")
+  @Test
   void shouldReturn409WhenCategoryAlreadyExistsByName() throws Exception {
     CategoryRequest request = new CategoryRequest(expectedCategoryName);
     String errorMessage = format(CATEGORY_NAME_ALREADY_EXISTS, expectedCategoryName);
