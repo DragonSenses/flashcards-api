@@ -5,6 +5,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID;
 import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_NAME;
+import com.ken.flashcards.dto.CategoryRequest;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.model.Category;
 import com.ken.flashcards.service.CategoryService;
@@ -115,4 +118,27 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(status().isNotFound())
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
+
+  // createCategory(CategoryRequest request)
+  // Should return 201 Created with category details when a valid request is submitted
+  @Test
+  @DisplayName("POST /categories - should create category when request is valid")
+  void shouldCreateCategoryWhenRequestIsValid() throws Exception {
+    CategoryRequest request = new CategoryRequest(expectedCategoryName);
+    Category expectedCategory = new Category(expectedCategoryId, expectedCategoryName);
+    String expectedResponseBody = """
+        {
+            "id":"%s",
+            "name":"%s"
+        }
+        """.formatted(expectedCategoryId, expectedCategoryName);
+
+    when(categoryService.createCategory(request)).thenReturn(expectedCategory);
+
+    mockMvc
+        .perform(post(categoriesPath).contentType(APPLICATION_JSON)
+            .content("{\"name\":\"" + expectedCategoryName + "\"}"))
+        .andExpect(status().isCreated()).andExpect(content().json(expectedResponseBody));
+  }
+
 }
