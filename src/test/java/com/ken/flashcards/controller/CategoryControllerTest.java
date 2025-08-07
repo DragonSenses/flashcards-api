@@ -21,7 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID;
 import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_NAME;
+import static com.ken.flashcards.constants.ExceptionMessages.CATEGORY_NAME_ALREADY_EXISTS;
 import com.ken.flashcards.dto.CategoryRequest;
+import com.ken.flashcards.exception.ConflictException;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.model.Category;
 import com.ken.flashcards.service.CategoryService;
@@ -149,4 +151,21 @@ public class CategoryControllerTest extends ControllerTestBase {
     mockMvc.perform(post(categoriesPath).contentType(APPLICATION_JSON).content(""))
         .andExpect(status().isBadRequest());
   }
+
+  @Test
+  @DisplayName("POST /categories - should return 409 when category name already exists")
+  void shouldReturn409WhenCategoryAlreadyExistsByName() throws Exception {
+    CategoryRequest request = new CategoryRequest(expectedCategoryName);
+    String errorMessage = format(CATEGORY_NAME_ALREADY_EXISTS, expectedCategoryName);
+    String expectedJson = format("{\"error\":\"%s\"}", errorMessage);
+
+    when(categoryService.createCategory(request)).thenThrow(new ConflictException(errorMessage));
+
+    mockMvc
+        .perform(post(categoriesPath).contentType(APPLICATION_JSON).content("{\"name\":\"Music\"}"))
+        .andExpect(status().isConflict())
+        .andExpect(result -> assertTrue(result.getResolvedException() instanceof ConflictException))
+        .andExpect(content().json(expectedJson));
+  }
+
 }
