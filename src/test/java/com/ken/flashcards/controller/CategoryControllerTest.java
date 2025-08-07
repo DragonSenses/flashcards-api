@@ -166,7 +166,7 @@ public class CategoryControllerTest extends ControllerTestBase {
     String newId = "1";
     String newName = "Hip-hop Music";
     Category newCategory = new Category(newId, newName);
-
+    
     when(categoryService.existsById(newId)).thenReturn(false);
     when(categoryService.save(newCategory)).thenReturn(newCategory);
 
@@ -186,6 +186,34 @@ public class CategoryControllerTest extends ControllerTestBase {
 
     mockMvc.perform(put(categoriesPath).contentType(APPLICATION_JSON).content(requestBody))
         .andExpect(status().isCreated()).andExpect(content().json(expectedResponseBody));
+  }
+
+  @DisplayName("PUT /categories - should update existing category when ID exists (200 OK)")
+  @Test
+  void shouldUpdateCategoryWhenIdExists() throws Exception {
+    String newId = "1";
+    String newName = "Hip-hop Music";
+    Category newCategory = new Category(newId, newName);
+
+    when(categoryService.existsById(newId)).thenReturn(true);
+    when(categoryService.save(newCategory)).thenReturn(newCategory);
+
+    String requestBody = """
+        {
+            "id": "%s",
+            "name": "%s"
+        }
+        """.formatted(newId, newName);
+
+    String expectedResponseBody = """
+        {
+            "id": "%s",
+            "name": "%s"
+        }
+        """.formatted(newId, newName);
+
+    mockMvc.perform(put(categoriesPath).contentType(APPLICATION_JSON).content(requestBody))
+        .andExpect(status().isOk()).andExpect(content().json(expectedResponseBody));
   }
 
 
