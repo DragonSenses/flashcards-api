@@ -165,24 +165,24 @@ public class CategoryControllerTest extends ControllerTestBase {
   void shouldCreateCategoryWhenIdDoesNotExist() throws Exception {
     String newId = "1";
     String newName = "Hip-hop Music";
-
     Category newCategory = new Category(newId, newName);
+
     when(categoryService.existsById(newId)).thenReturn(false);
     when(categoryService.save(newCategory)).thenReturn(newCategory);
 
     String requestBody = """
         {
-            "id": "1",
-            "name": "Hip-hop Music"
+            "id": "%s",
+            "name": "%s"
         }
-        """;
+        """.formatted(newId, newName);
 
     String expectedResponseBody = """
         {
-            "id": "1",
-            "name": "Hip-hop Music"
+            "id": "%s",
+            "name": "%s"
         }
-        """;
+        """.formatted(newId, newName);
 
     mockMvc.perform(put(categoriesPath).contentType(APPLICATION_JSON).content(requestBody))
         .andExpect(status().isCreated()).andExpect(content().json(expectedResponseBody));
