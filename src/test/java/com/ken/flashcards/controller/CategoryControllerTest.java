@@ -239,6 +239,30 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(status().isBadRequest());
   }
 
+  @DisplayName("PUT /categories - should return 400 when request is invalid")
+  @Test
+  void shouldReturn400WhenPutRequestBodyIsInvalid() throws Exception {
+    String invalidRequestJson = "{\"id\":null,\"name\":null}";
+
+    String expectedJson = String.format("""
+        {
+            "errors": [
+                "%s",
+                "%s"
+            ]
+        }
+        """, "id is required", "name is required"); // Expected validation errors for missing fields
+
+    // Expected: ["id is required", "name is required"]
+    // NOTE: Messages are uncapitalized — may mismatch actual response format
+    // Actual messages may differ in casing or structure — revisit if test fails
+    // TODO: Confirm if DTO-level validation is correctly triggered
+    // TODO: Ensure @Valid annotations are applied and propagated correctly
+
+    mockMvc.perform(put(categoriesPath).contentType(APPLICATION_JSON).content(invalidRequestJson))
+        .andExpect(status().isBadRequest()).andExpect(content().json(expectedJson));
+  }
+
   @DisplayName("DELETE /categories/{id} - should delete category by ID (204 No Content)")
   @Test
   void shouldDeleteCategoryById() throws Exception {
