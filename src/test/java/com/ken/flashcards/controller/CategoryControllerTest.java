@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -223,4 +226,14 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(status().isBadRequest());
   }
 
+  @DisplayName("DELETE /categories/{id} - should delete category by ID (204 No Content)")
+  @Test
+  void shouldDeleteCategoryById() throws Exception {
+    String categoryIdToDelete = "category-id-001";
+
+    mockMvc.perform(delete(categoriesPath + "/" + categoryIdToDelete))
+        .andExpect(status().isNoContent());
+
+    verify(categoryService, times(1)).deleteById(categoryIdToDelete);
+  }
 }
