@@ -166,7 +166,7 @@ public class CategoryControllerTest extends ControllerTestBase {
     String newId = "1";
     String newName = "Hip-hop Music";
     Category newCategory = new Category(newId, newName);
-    
+
     when(categoryService.existsById(newId)).thenReturn(false);
     when(categoryService.save(newCategory)).thenReturn(newCategory);
 
@@ -216,5 +216,11 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(status().isOk()).andExpect(content().json(expectedResponseBody));
   }
 
+  @DisplayName("PUT /categories - should return 400 when request body is empty")
+  @Test
+  void shouldReturn400WhenUpdateCategoryRequestBodyIsEmpty() throws Exception {
+    mockMvc.perform(put(categoriesPath).contentType(APPLICATION_JSON).content(""))
+        .andExpect(status().isBadRequest());
+  }
 
 }
