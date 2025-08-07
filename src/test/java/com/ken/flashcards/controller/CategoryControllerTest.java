@@ -141,4 +141,12 @@ public class CategoryControllerTest extends ControllerTestBase {
         .andExpect(status().isCreated()).andExpect(content().json(expectedResponseBody));
   }
 
+  // createCategory(CategoryRequest request)
+  // Should return 400 Bad Request when the request body is empty
+  @Test
+  @DisplayName("POST /categories - should return 400 when request body is empty")
+  void shouldReturn400WhenCreateCategoryRequestBodyIsEmpty() throws Exception {
+    mockMvc.perform(post(categoriesPath).contentType(APPLICATION_JSON).content(""))
+        .andExpect(status().isBadRequest());
+  }
 }
