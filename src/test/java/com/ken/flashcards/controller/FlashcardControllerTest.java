@@ -155,5 +155,14 @@ public class FlashcardControllerTest extends ControllerTestBase {
         .andExpect(status().isOk()).andExpect(content().json(serialize(flashcard)));
   }
 
+  @DisplayName("PUT /api/v1/flashcards - should create flashcard when ID does not exist (upsert)")
+  @Test
+  void shouldCreateFlashcardWhenIdDoesNotExist() throws Exception {
+    when(flashcardService.existsById(flashcard.getId())).thenReturn(false);
+    when(flashcardService.save(flashcard)).thenReturn(flashcard);
+
+    mockMvc.perform(put(flashcardsPath).contentType(APPLICATION_JSON).content(serialize(flashcard)))
+        .andExpect(status().isCreated()).andExpect(content().json(serialize(flashcard)));
+  }
 
 }
