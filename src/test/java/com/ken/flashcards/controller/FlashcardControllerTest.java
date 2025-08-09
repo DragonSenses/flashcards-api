@@ -10,13 +10,16 @@ import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ken.flashcards.constants.ExceptionMessages;
+import com.ken.flashcards.dto.FlashcardRequest;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.model.Flashcard;
 import com.ken.flashcards.service.FlashcardService;
@@ -103,5 +106,17 @@ public class FlashcardControllerTest extends ControllerTestBase {
         .andExpect(status().isNotFound())
         .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException))
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
+
+  @DisplayName("POST /api/v1/flashcards - should create a new flashcard")
+  @Test
+  void shouldCreateFlashcard() throws Exception {
+    FlashcardRequest request =
+        new FlashcardRequest(expectedStudySessionId, expectedQuestion, expectedAnswer);
+
+    when(flashcardService.createFlashcard(request)).thenReturn(flashcard);
+
+    mockMvc.perform(post(flashcardsPath).contentType(APPLICATION_JSON).content(serialize(request)))
+        .andExpect(status().isCreated()).andExpect(content().json(serialize(flashcard)));
   }
 }
