@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ken.flashcards.dto.FlashcardRequest;
@@ -20,6 +21,7 @@ import com.ken.flashcards.service.FlashcardService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -64,7 +66,7 @@ public class FlashcardController implements ResponseHandler {
 
   @Operation(summary = "Get all flashcards by study session ID",
       parameters = @Parameter(name = "studySessionId", description = "ID of the study session",
-          required = true))
+          required = true, in = ParameterIn.QUERY))
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Flashcards retrieved by session",
           content = @Content(mediaType = "application/json",
@@ -73,7 +75,7 @@ public class FlashcardController implements ResponseHandler {
           content = @Content(mediaType = "application/json",
               schema = @Schema(implementation = ErrorResponse.class)))})
   @GetMapping("/details")
-  public ResponseEntity<Iterable<Flashcard>> findBySession(@PathVariable String studySessionId) {
+  public ResponseEntity<Iterable<Flashcard>> findBySession(@RequestParam String studySessionId) {
     return ok(flashcardService.findAllByStudySessionId(studySessionId));
   }
 
