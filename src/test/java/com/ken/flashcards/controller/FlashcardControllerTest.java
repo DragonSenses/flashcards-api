@@ -119,4 +119,11 @@ public class FlashcardControllerTest extends ControllerTestBase {
     mockMvc.perform(post(flashcardsPath).contentType(APPLICATION_JSON).content(serialize(request)))
         .andExpect(status().isCreated()).andExpect(content().json(serialize(flashcard)));
   }
+
+  @DisplayName("POST /api/v1/flashcards - should return 400 when request body is empty")
+  @Test
+  void shouldReturnBadRequestWhenRequestBodyIsEmpty() throws Exception {
+    mockMvc.perform(post(flashcardsPath).contentType(APPLICATION_JSON).content(""))
+        .andExpect(status().isBadRequest());
+  }
 }
