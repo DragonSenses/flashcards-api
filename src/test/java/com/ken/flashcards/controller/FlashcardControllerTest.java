@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -198,5 +201,13 @@ public class FlashcardControllerTest extends ControllerTestBase {
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 
+  @DisplayName("DELETE /api/v1/flashcards/{id} - should delete flashcard by ID")
+  @Test
+  void shouldDeleteFlashcardById() throws Exception {
+    mockMvc.perform(delete(flashcardsPath + "/" + expectedFlashcardId))
+        .andExpect(status().isNoContent());
+
+    verify(flashcardService, times(1)).deleteById(expectedFlashcardId);
+  }
 
 }
