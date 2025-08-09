@@ -1590,7 +1590,7 @@ com.ken.flashcards.constants
 
 ---
 
-## 🧪 Controller Testing Overview
+# 🧪 Controller Testing Overview
 
 ### 🎯 Purpose
 
@@ -1647,3 +1647,56 @@ Located in `/test/.../flashcards/controller/`, scoped to controller tests for di
 
 ---
 
+# 🧪 CategoryControllerTest Overview
+
+### 🎯 Purpose
+
+`CategoryControllerTest` validates the behavior of REST endpoints exposed by `CategoryController`. It ensures:
+
+- ✅ Correct HTTP status codes and structured response bodies  
+- 🔁 Proper delegation to `CategoryService` methods  
+- 🚫 Robust validation and error handling for edge cases  
+- 📘 Compliance with OpenAPI documentation and expected contract
+
+---
+
+### 🧱 Structure
+
+| Section       | Description                                                                 |
+|---------------|-----------------------------------------------------------------------------|
+| **Setup**     | Annotated with `@WebMvcTest(CategoryController.class)`                      |
+| **Mocking**   | Injects `CategoryService` using `@MockBean`                                 |
+| **Execution** | Uses `MockMvc` to simulate HTTP requests with path, payload, and headers   |
+| **Verification** | Asserts status codes, response content, and exception mapping         |
+
+---
+
+### 📂 Endpoint Coverage
+
+- `GET /categories` — fetch all categories  
+- `POST /categories` — create a new category  
+- `DELETE /categories/{id}` — delete category by ID  
+- ❌ Negative tests for:
+  - Duplicate category names  
+  - Missing required fields  
+  - Non-existent category IDs
+
+---
+
+### 🧰 Shared Utilities: `ControllerTestBase`
+
+- `serialize(Object obj)` — converts Java objects to JSON strings  
+- `deserialize(String json, Class<T> type)` — parses JSON into Java objects  
+- Promotes clean, consistent assertions across controller tests
+
+---
+
+### ✅ Best Practices
+
+- Isolated controller testing via `@WebMvcTest`  
+- Mocked service dependencies to avoid side effects  
+- Edge case coverage for validation and not-found scenarios  
+- Consistent use of `ControllerTestBase` for JSON handling  
+- Alignment with OpenAPI paths and payloads
+
+---
