@@ -2,6 +2,7 @@ package com.ken.flashcards.controller;
 
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.ken.flashcards.constants.ExceptionMessages;
+import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.model.Flashcard;
 import com.ken.flashcards.service.FlashcardService;
 
@@ -60,5 +63,20 @@ public class FlashcardControllerTest extends ControllerTestBase {
 
     mockMvc.perform(get(flashcardsPath + "/" + expectedFlashcardId)).andExpect(status().isOk())
         .andExpect(content().json(serialize(flashcard)));
+  }
+
+  @DisplayName("GET /flashcards/{id} - should return 404 when flashcard is not found")
+  @Test
+  void shouldReturn404WhenFlashcardDoesNotExistById() throws Exception {
+    String errorMessage =
+        String.format(ExceptionMessages.CANNOT_FIND_FLASHCARD_BY_ID, expectedFlashcardId);
+
+    when(flashcardService.findById(expectedFlashcardId))
+        .thenThrow(new NotFoundException(errorMessage));
+
+    mockMvc.perform(get(flashcardsPath + "/" + expectedFlashcardId))
+        .andExpect(status().isNotFound())
+        .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException))
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 }
