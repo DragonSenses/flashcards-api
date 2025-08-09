@@ -172,4 +172,13 @@ public class FlashcardControllerTest extends ControllerTestBase {
         .andExpect(status().isBadRequest());
   }
 
+  @DisplayName("PUT /api/v1/flashcards - should return 400 when request body is missing")
+  @Test
+  void shouldReturnBadRequestWhenUpdatePayloadIsMissing() throws Exception {
+    mockMvc.perform(put(flashcardsPath).contentType(APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+
+
 }
