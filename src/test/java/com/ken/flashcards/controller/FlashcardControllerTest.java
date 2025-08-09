@@ -89,4 +89,19 @@ public class FlashcardControllerTest extends ControllerTestBase {
     mockMvc.perform(get(flashcardsPath + "/details?studySessionId=" + expectedStudySessionId))
         .andExpect(status().isOk()).andExpect(content().json(serialize(Set.of(flashcard))));
   }
+
+  @DisplayName("GET /api/v1/flashcards/details - should return 404 when study session is not found")
+  @Test
+  void shouldReturn404WhenStudySessionNotFound() throws Exception {
+    String studySessionId = "nonexistent-session-id";
+    String errorMessage = "Study session not found: " + studySessionId;
+
+    when(flashcardService.findAllByStudySessionId(studySessionId))
+        .thenThrow(new NotFoundException(errorMessage));
+
+    mockMvc.perform(get("/api/v1/flashcards/details").param("studySessionId", studySessionId))
+        .andExpect(status().isNotFound())
+        .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException))
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
 }
