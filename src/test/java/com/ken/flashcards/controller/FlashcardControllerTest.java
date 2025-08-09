@@ -47,7 +47,7 @@ public class FlashcardControllerTest extends ControllerTestBase {
         expectedAnswer);
   }
 
-  @DisplayName("GET /flashcards - should return 200 with all flashcards")
+  @DisplayName("GET /api/v1/flashcards - should return 200 with all flashcards")
   @Test
   void shouldReturn200WithAllFlashcards() throws Exception {
     when(flashcardService.findAll()).thenReturn(Set.of(flashcard));
@@ -56,7 +56,7 @@ public class FlashcardControllerTest extends ControllerTestBase {
         .andExpect(content().json(serialize(Set.of(flashcard))));
   }
 
-  @DisplayName("GET /flashcards/{id} - should return 200 when flashcard exists")
+  @DisplayName("GET /api/v1/flashcards/{id} - should return 200 when flashcard exists")
   @Test
   void shouldReturn200WhenFlashcardExistsById() throws Exception {
     when(flashcardService.findById(expectedFlashcardId)).thenReturn(flashcard);
@@ -65,7 +65,7 @@ public class FlashcardControllerTest extends ControllerTestBase {
         .andExpect(content().json(serialize(flashcard)));
   }
 
-  @DisplayName("GET /flashcards/{id} - should return 404 when flashcard is not found")
+  @DisplayName("GET /api/v1/flashcards/{id} - should return 404 when flashcard is not found")
   @Test
   void shouldReturn404WhenFlashcardDoesNotExistById() throws Exception {
     String errorMessage =
@@ -80,7 +80,7 @@ public class FlashcardControllerTest extends ControllerTestBase {
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 
-  @DisplayName("GET /flashcards/details?studySessionId={id} - should return 200 when study session exists")
+  @DisplayName("GET /api/v1/flashcards/details?studySessionId={id} - should return 200 when study session exists")
   @Test
   void shouldReturn200WhenStudySessionExists() throws Exception {
     when(flashcardService.findAllByStudySessionId(expectedStudySessionId))
