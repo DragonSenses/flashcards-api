@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -210,4 +211,17 @@ public class FlashcardControllerTest extends ControllerTestBase {
     verify(flashcardService, times(1)).deleteById(expectedFlashcardId);
   }
 
+  @DisplayName("DELETE /api/v1/flashcards/{id} - should return 404 if flashcard not found")
+  @Test
+  void shouldReturn404WhenFlashcardNotFound() throws Exception {
+    String nonExistentId = "flashcard-id-999";
+    String errorMessage =
+        String.format(ExceptionMessages.CANNOT_FIND_FLASHCARD_BY_ID, nonExistentId);
+
+    doThrow(new NotFoundException(errorMessage)).when(flashcardService).deleteById(nonExistentId);
+
+    mockMvc.perform(delete(flashcardsPath + "/" + nonExistentId)).andExpect(status().isNotFound())
+        .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException))
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
 }
