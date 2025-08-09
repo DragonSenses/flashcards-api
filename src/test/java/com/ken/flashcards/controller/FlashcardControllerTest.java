@@ -79,4 +79,14 @@ public class FlashcardControllerTest extends ControllerTestBase {
         .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException))
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
+
+  @DisplayName("GET /flashcards/details?studySessionId={id} - should return 200 when study session exists")
+  @Test
+  void shouldReturn200WhenStudySessionExists() throws Exception {
+    when(flashcardService.findAllByStudySessionId(expectedStudySessionId))
+        .thenReturn(Set.of(flashcard));
+
+    mockMvc.perform(get(flashcardsPath + "/details?studySessionId=" + expectedStudySessionId))
+        .andExpect(status().isOk()).andExpect(content().json(serialize(Set.of(flashcard))));
+  }
 }
