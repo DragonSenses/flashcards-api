@@ -52,4 +52,13 @@ public class FlashcardControllerTest extends ControllerTestBase {
     mockMvc.perform(get(flashcardsPath)).andExpect(status().isOk())
         .andExpect(content().json(serialize(Set.of(flashcard))));
   }
+
+  @DisplayName("GET /flashcards/{id} - should return 200 when flashcard exists")
+  @Test
+  void shouldReturn200WhenFlashcardExistsById() throws Exception {
+    when(flashcardService.findById(expectedFlashcardId)).thenReturn(flashcard);
+
+    mockMvc.perform(get(flashcardsPath + "/" + expectedFlashcardId)).andExpect(status().isOk())
+        .andExpect(content().json(serialize(flashcard)));
+  }
 }
