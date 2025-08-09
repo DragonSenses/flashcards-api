@@ -179,6 +179,24 @@ public class FlashcardControllerTest extends ControllerTestBase {
         .andExpect(status().isBadRequest());
   }
 
+  @DisplayName("PUT /api/v1/flashcards - should return 404 when study session ID does not exist during update")
+  @Test
+  void shouldReturnNotFoundWhenUpdatingFlashcardWithNonexistentStudySession() throws Exception {
+    String nonexistentStudySessionId = "nonexistent-study-session-id-999";
+    String errorMessage =
+        String.format(ExceptionMessages.CANNOT_FIND_STUDY_SESSION_BY_ID, nonexistentStudySessionId);
+
+    Flashcard newFlashcard = new Flashcard("1", nonexistentStudySessionId,
+        "Is water (H₂O) ionic or covalent?", "Covalent");
+
+    when(flashcardService.existsById("1")).thenReturn(true);
+    when(flashcardService.save(newFlashcard)).thenThrow(new NotFoundException(errorMessage));
+
+    mockMvc
+        .perform(put(flashcardsPath).contentType(APPLICATION_JSON).content(serialize(newFlashcard)))
+        .andExpect(status().isNotFound())
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
 
 
 }
