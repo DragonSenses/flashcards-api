@@ -15,6 +15,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -143,4 +144,16 @@ public class FlashcardControllerTest extends ControllerTestBase {
         .andExpect(status().isNotFound())
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
+
+  @DisplayName("PUT /api/v1/flashcards - should update flashcard when ID exists")
+  @Test
+  void shouldUpdateFlashcardWhenIdExists() throws Exception {
+    when(flashcardService.existsById(flashcard.getId())).thenReturn(true);
+    when(flashcardService.save(flashcard)).thenReturn(flashcard);
+
+    mockMvc.perform(put(flashcardsPath).contentType(APPLICATION_JSON).content(serialize(flashcard)))
+        .andExpect(status().isOk()).andExpect(content().json(serialize(flashcard)));
+  }
+
+
 }
