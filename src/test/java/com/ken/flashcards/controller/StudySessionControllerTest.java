@@ -52,4 +52,16 @@ public class StudySessionControllerTest extends ControllerTestBase {
         .andExpect(content().json(serialize(Set.of(studySession))));
   }
 
+  @Test
+  @DisplayName("GET /api/v1/sessions/{id} returns study session by ID")
+  void returnsStudySessionByIdSuccessfully() throws Exception {
+    when(studySessionService.findById(expectedStudySessionId)).thenReturn(studySession);
+
+    mockMvc
+        .perform(
+            get(studySessionsPath + "/" + expectedStudySessionId).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk()).andExpect(content().json(serialize(studySession)));
+  }
+
+
 }
