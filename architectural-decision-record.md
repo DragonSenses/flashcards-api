@@ -1700,3 +1700,56 @@ Located in `/test/.../flashcards/controller/`, scoped to controller tests for di
 - Alignment with OpenAPI paths and payloads
 
 ---
+
+# 🧪 FlashcardControllerTest Overview
+
+### 🎯 Purpose
+
+`FlashcardControllerTest` verifies the behavior of REST endpoints exposed by `FlashcardController`. It ensures:
+
+- ✅ Accurate HTTP status codes and response payloads  
+- 🔁 Correct delegation to `FlashcardService` methods  
+- 🚫 Validation of input and handling of missing resources  
+- 📘 Alignment with OpenAPI documentation and expected contract
+
+---
+
+### 🧱 Structure
+
+| Section       | Description                                                                 |
+|---------------|-----------------------------------------------------------------------------|
+| **Setup**     | Annotated with `@WebMvcTest(FlashcardController.class)`                     |
+| **Mocking**   | Injects `FlashcardService` using `@MockBean`                                |
+| **Execution** | Uses `MockMvc` to simulate HTTP requests with path, payload, and headers   |
+| **Verification** | Asserts status codes, response content, and exception mapping         |
+
+---
+
+### 📂 Endpoint Coverage
+
+- `GET /flashcards` — fetch all flashcards  
+- `POST /flashcards` — create a new flashcard  
+- `DELETE /flashcards/{id}` — delete flashcard by ID  
+- ❌ Negative tests for:
+  - Invalid input payloads  
+  - Non-existent flashcard IDs  
+  - Structured error responses with `NotFoundException`
+
+---
+
+### 🧰 Shared Utilities: `ControllerTestBase`
+
+- `serialize(Object obj)` — converts Java objects to JSON strings  
+- `deserialize(String json, Class<T> type)` — parses JSON into Java objects  
+- Centralizes JSON handling for clean and consistent assertions
+
+---
+
+### ✅ Best Practices
+
+- Isolated controller testing via `@WebMvcTest`  
+- Mocked service-layer dependencies for test isolation  
+- Negative test coverage for validation and exception handling  
+- Use of `ControllerTestBase` for JSON serialization  
+- Alignment with OpenAPI specs for path and payload consistency
+
