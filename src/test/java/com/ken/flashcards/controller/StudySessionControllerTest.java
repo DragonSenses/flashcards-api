@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ken.flashcards.constants.ExceptionMessages;
 import com.ken.flashcards.dto.StudySessionRequest;
+import com.ken.flashcards.exception.ConflictException;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.model.StudySession;
 import com.ken.flashcards.service.StudySessionService;
@@ -108,5 +109,24 @@ public class StudySessionControllerTest extends ControllerTestBase {
     mockMvc
         .perform(post(studySessionsPath).contentType(APPLICATION_JSON).content(serialize(request)))
         .andExpect(status().isCreated()).andExpect(content().json(serialize(studySession)));
+  }
+
+  @Test
+  @DisplayName("POST /api/v1/sessions returns 409 when study session name already exists")
+  void returnsConflictWhenStudySessionExistsByName() throws Exception {
+    String sameStudySessionName = expectedStudySessionName;
+    String differentCategoryId = "2";
+    String errorMessage =
+        String.format(ExceptionMessages.STUDY_SESSION_NAME_ALREADY_EXISTS, sameStudySessionName);
+
+    StudySessionRequest request = new StudySessionRequest(differentCategoryId, sameStudySessionName);
+
+    when(studySessionService.createStudySession(request))
+        .thenThrow(new ConflictException(errorMessage));
+
+    mockMvc
+        .perform(post(studySessionsPath).contentType(APPLICATION_JSON).content(serialize(request)))
+        .andExpect(status().isConflict())
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 }
