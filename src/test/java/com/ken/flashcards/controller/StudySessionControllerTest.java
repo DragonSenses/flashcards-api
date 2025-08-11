@@ -139,5 +139,23 @@ public class StudySessionControllerTest extends ControllerTestBase {
         .andExpect(status().isBadRequest());
   }
 
+  @Test
+  @DisplayName("POST /api/v1/sessions returns 404 when category ID does not exist")
+  void shouldReturnNotFoundWhenCategoryIdIsInvalid() throws Exception {
+    String nonExistentCategoryId = "32";
+    String errorMessage =
+        String.format(ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID, nonExistentCategoryId);
+
+    StudySessionRequest request =
+        new StudySessionRequest(expectedStudySessionId, expectedStudySessionName);
+    when(studySessionService.createStudySession(request))
+        .thenThrow(new NotFoundException(errorMessage));
+
+    mockMvc
+        .perform(post(studySessionsPath).contentType(APPLICATION_JSON).content(serialize(request)))
+        .andExpect(status().isNotFound())
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
+
 
 }
