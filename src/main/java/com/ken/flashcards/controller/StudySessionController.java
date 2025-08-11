@@ -102,6 +102,9 @@ public class StudySessionController implements ResponseHandler {
               schema = @Schema(implementation = ErrorResponse.class))}),
       @ApiResponse(responseCode = "404", description = "Study session not found",
           content = {@Content(mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class))}),
+      @ApiResponse(responseCode = "409", description = "Study session name already exists",
+          content = {@Content(mediaType = "application/json",
               schema = @Schema(implementation = ErrorResponse.class))})})
   @PostMapping
   public ResponseEntity<StudySession> createStudySession(@RequestBody StudySessionRequest request) {
