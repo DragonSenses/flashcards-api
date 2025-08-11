@@ -13,10 +13,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ken.flashcards.constants.ExceptionMessages;
+import com.ken.flashcards.dto.StudySessionRequest;
 import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.model.StudySession;
 import com.ken.flashcards.service.StudySessionService;
@@ -93,5 +95,18 @@ public class StudySessionControllerTest extends ControllerTestBase {
         .perform(get(studySessionsPath + "/details").param("categoryId", expectedCategoryId)
             .contentType(APPLICATION_JSON))
         .andExpect(status().isOk()).andExpect(content().json(serialize(Set.of(studySession))));
+  }
+
+  @Test
+  @DisplayName("POST /api/v1/sessions creates study session when it does not exist")
+  void returnsCreatedWhenStudySessionDoesNotExist() throws Exception {
+    StudySessionRequest request =
+        new StudySessionRequest(expectedCategoryId, expectedStudySessionName);
+
+    when(studySessionService.createStudySession(request)).thenReturn(studySession);
+
+    mockMvc
+        .perform(post(studySessionsPath).contentType(APPLICATION_JSON).content(serialize(request)))
+        .andExpect(status().isCreated()).andExpect(content().json(serialize(studySession)));
   }
 }
