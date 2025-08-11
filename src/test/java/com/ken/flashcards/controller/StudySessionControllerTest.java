@@ -50,7 +50,7 @@ public class StudySessionControllerTest extends ControllerTestBase {
 
   @Test
   @DisplayName("GET /api/v1/sessions returns all study sessions")
-  void returnsAllStudySessionsSuccessfully() throws Exception {
+  void shouldReturnAllStudySessions() throws Exception {
     when(studySessionService.findAll()).thenReturn(Set.of(studySession));
 
     mockMvc.perform(get(studySessionsPath).contentType(APPLICATION_JSON)).andExpect(status().isOk())
@@ -59,7 +59,7 @@ public class StudySessionControllerTest extends ControllerTestBase {
 
   @Test
   @DisplayName("GET /api/v1/sessions/{id} returns study session by ID")
-  void returnsStudySessionByIdSuccessfully() throws Exception {
+  void shouldReturnStudySessionById() throws Exception {
     when(studySessionService.findById(expectedStudySessionId)).thenReturn(studySession);
 
     mockMvc
@@ -70,7 +70,7 @@ public class StudySessionControllerTest extends ControllerTestBase {
 
   @Test
   @DisplayName("GET /api/v1/sessions/{id} returns 404 when study session is not found")
-  void returnsNotFoundWhenStudySessionDoesNotExist() throws Exception {
+  void shouldReturnNotFoundWhenStudySessionIsInvalid() throws Exception {
     String nonexistentStudySessionId = "nonexistent-session-id-123";
 
     String errorMessage =
@@ -88,7 +88,7 @@ public class StudySessionControllerTest extends ControllerTestBase {
 
   @Test
   @DisplayName("GET /api/v1/sessions/details?categoryId returns 200 with sessions for category")
-  void returnsSessionsByCategoryId() throws Exception {
+  void shouldReturnStudySessionsByCategoryId() throws Exception {
     when(studySessionService.findAllByCategoryId(expectedCategoryId))
         .thenReturn(Set.of(studySession));
 
@@ -100,7 +100,7 @@ public class StudySessionControllerTest extends ControllerTestBase {
 
   @Test
   @DisplayName("POST /api/v1/sessions creates study session when it does not exist")
-  void returnsCreatedWhenStudySessionDoesNotExist() throws Exception {
+  void shouldCreateStudySessionViaPostWhenIdIsNew() throws Exception {
     StudySessionRequest request =
         new StudySessionRequest(expectedCategoryId, expectedStudySessionName);
 
@@ -113,13 +113,14 @@ public class StudySessionControllerTest extends ControllerTestBase {
 
   @Test
   @DisplayName("POST /api/v1/sessions returns 409 when study session name already exists")
-  void returnsConflictWhenStudySessionExistsByName() throws Exception {
+  void shouldReturnConflictWhenStudySessionNameAlreadyExists() throws Exception {
     String sameStudySessionName = expectedStudySessionName;
     String differentCategoryId = "2";
     String errorMessage =
         String.format(ExceptionMessages.STUDY_SESSION_NAME_ALREADY_EXISTS, sameStudySessionName);
 
-    StudySessionRequest request = new StudySessionRequest(differentCategoryId, sameStudySessionName);
+    StudySessionRequest request =
+        new StudySessionRequest(differentCategoryId, sameStudySessionName);
 
     when(studySessionService.createStudySession(request))
         .thenThrow(new ConflictException(errorMessage));
