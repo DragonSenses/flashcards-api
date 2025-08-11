@@ -10,6 +10,8 @@ public final class ExceptionMessages {
 
   public static final String CANNOT_FIND_FLASHCARD_BY_ID = "Flashcard with ID '%s' not found";
 
+  public static final String STUDY_SESSION_NAME_ALREADY_EXISTS = "Study session with name '%s' already exists";
+  
   public static final String CANNOT_FIND_STUDY_SESSION_BY_ID =
       "Study session with ID '%s' not found";
 
