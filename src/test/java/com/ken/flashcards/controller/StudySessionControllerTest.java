@@ -14,6 +14,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -130,4 +131,13 @@ public class StudySessionControllerTest extends ControllerTestBase {
         .andExpect(status().isConflict())
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
+
+  @Test
+  @DisplayName("PUT /api/v1/sessions returns 400 when request body is empty")
+  void shouldReturnBadRequestViaPutWhenRequestBodyIsEmpty() throws Exception {
+    mockMvc.perform(put(studySessionsPath).contentType(APPLICATION_JSON).content(""))
+        .andExpect(status().isBadRequest());
+  }
+
+
 }
