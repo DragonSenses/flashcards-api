@@ -173,6 +173,20 @@ public class StudySessionControllerTest extends ControllerTestBase {
         .andExpect(status().isCreated()).andExpect(content().json(serialize(newStudySession)));
   }
 
+  @Test
+  @DisplayName("PUT /api/v1/sessions returns 200, updates session when ID exists")
+  void shouldUpdateStudySessionWhenIdExists() throws Exception {
+    StudySession existingStudySession =
+        new StudySession(expectedStudySessionId, expectedCategoryId, expectedStudySessionName);
+
+    when(studySessionService.existsById(expectedStudySessionId)).thenReturn(true);
+    when(studySessionService.save(existingStudySession)).thenReturn(existingStudySession);
+
+    mockMvc
+        .perform(put(studySessionsPath).contentType(APPLICATION_JSON)
+            .content(serialize(existingStudySession)))
+        .andExpect(status().isOk()).andExpect(content().json(serialize(existingStudySession)));
+  }
 
 
 }
