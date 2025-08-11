@@ -5,6 +5,8 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -225,6 +228,15 @@ public class StudySessionControllerTest extends ControllerTestBase {
             .content(serialize(newStudySession)))
         .andExpect(status().isNotFound())
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
+
+  @DisplayName("DELETE /api/v1/sessions/{id} returns 204 when session is deleted")
+  @Test
+  void shouldReturnNoContentViaDeleteWhenDeletingById() throws Exception {
+    mockMvc.perform(delete(studySessionsPath + "/" + expectedStudySessionId))
+        .andExpect(status().isNoContent());
+
+    verify(studySessionService, times(1)).deleteById(expectedStudySessionId);
   }
 
 }
