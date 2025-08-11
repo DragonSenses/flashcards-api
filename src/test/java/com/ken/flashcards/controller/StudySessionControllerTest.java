@@ -157,5 +157,22 @@ public class StudySessionControllerTest extends ControllerTestBase {
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 
+  @Test
+  @DisplayName("PUT /api/v1/sessions returns 201, creates session when ID does not exist")
+  void shouldCreateStudySessionViaPutWhenIdIsNew() throws Exception {
+    String newStudySessionId = "1";
+    StudySession newStudySession =
+        new StudySession(newStudySessionId, expectedCategoryId, expectedStudySessionName);
+
+    when(studySessionService.existsById(newStudySessionId)).thenReturn(false);
+    when(studySessionService.save(newStudySession)).thenReturn(newStudySession);
+
+    mockMvc
+        .perform(put(studySessionsPath).contentType(APPLICATION_JSON)
+            .content(serialize(newStudySession)))
+        .andExpect(status().isCreated()).andExpect(content().json(serialize(newStudySession)));
+  }
+
+
 
 }
