@@ -188,5 +188,23 @@ public class StudySessionControllerTest extends ControllerTestBase {
         .andExpect(status().isOk()).andExpect(content().json(serialize(existingStudySession)));
   }
 
+  @Test
+  @DisplayName("PUT /api/v1/sessions returns 409 when updating with an existing name")
+  void shouldReturnConflictViaPutWhenUpdatingWithDuplicateName() throws Exception {
+    StudySession newStudySession = new StudySession("1", "2", "Solar System");
+    String errorMessage = String.format(ExceptionMessages.STUDY_SESSION_NAME_ALREADY_EXISTS,
+        expectedStudySessionName);
+
+    when(studySessionService.existsById(expectedStudySessionId)).thenReturn(false);
+    when(studySessionService.save(newStudySession)).thenThrow(new ConflictException(errorMessage));
+
+    mockMvc
+        .perform(put(studySessionsPath).contentType(APPLICATION_JSON)
+            .content(serialize(newStudySession)))
+        .andExpect(status().isConflict())
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
+
+
 
 }
