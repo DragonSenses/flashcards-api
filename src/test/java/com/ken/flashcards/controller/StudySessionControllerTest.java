@@ -16,6 +16,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.ken.flashcards.constants.ExceptionMessages;
+import com.ken.flashcards.exception.NotFoundException;
 import com.ken.flashcards.model.StudySession;
 import com.ken.flashcards.service.StudySessionService;
 
@@ -63,5 +65,22 @@ public class StudySessionControllerTest extends ControllerTestBase {
         .andExpect(status().isOk()).andExpect(content().json(serialize(studySession)));
   }
 
+  @Test
+  @DisplayName("GET /api/v1/sessions/{id} returns 404 when study session is not found")
+  void returnsNotFoundWhenStudySessionDoesNotExist() throws Exception {
+    String nonexistentStudySessionId = "nonexistent-session-id-123";
+
+    String errorMessage =
+        String.format(ExceptionMessages.CANNOT_FIND_STUDY_SESSION_BY_ID, nonexistentStudySessionId);
+
+    when(studySessionService.findById(nonexistentStudySessionId))
+        .thenThrow(new NotFoundException(errorMessage));
+
+    mockMvc
+        .perform(
+            get(studySessionsPath + "/" + nonexistentStudySessionId).contentType(APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
 
 }
