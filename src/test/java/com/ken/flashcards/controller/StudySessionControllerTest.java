@@ -83,4 +83,15 @@ public class StudySessionControllerTest extends ControllerTestBase {
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 
+  @Test
+  @DisplayName("GET /api/v1/sessions/details?categoryId returns 200 with sessions for category")
+  void returnsSessionsByCategoryId() throws Exception {
+    when(studySessionService.findAllByCategoryId(expectedCategoryId))
+        .thenReturn(Set.of(studySession));
+
+    mockMvc
+        .perform(get(studySessionsPath + "/details").param("categoryId", expectedCategoryId)
+            .contentType(APPLICATION_JSON))
+        .andExpect(status().isOk()).andExpect(content().json(serialize(Set.of(studySession))));
+  }
 }
