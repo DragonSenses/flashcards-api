@@ -205,6 +205,26 @@ public class StudySessionControllerTest extends ControllerTestBase {
         .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
   }
 
+  @Test
+  @DisplayName("PUT /api/v1/sessions returns 404 when updating with non-existent category")
+  void shouldReturnNotFoundViaPutWhenUpdatingWithInvalidCategoryId() throws Exception {
+    String newStudySessionId = "1";
+    String invalidCategoryId = "2";
+    String studySessionName = "Solar System";
 
+    StudySession newStudySession =
+        new StudySession(newStudySessionId, invalidCategoryId, studySessionName);
+    String errorMessage =
+        String.format(ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID, invalidCategoryId);
+
+    when(studySessionService.existsById(newStudySessionId)).thenReturn(false);
+    when(studySessionService.save(newStudySession)).thenThrow(new NotFoundException(errorMessage));
+
+    mockMvc
+        .perform(put(studySessionsPath).contentType(APPLICATION_JSON)
+            .content(serialize(newStudySession)))
+        .andExpect(status().isNotFound())
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
 
 }
