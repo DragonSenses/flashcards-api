@@ -5,6 +5,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -239,4 +240,18 @@ public class StudySessionControllerTest extends ControllerTestBase {
     verify(studySessionService, times(1)).deleteById(expectedStudySessionId);
   }
 
+  @DisplayName("DELETE /api/v1/sessions/{id} returns 404 when session ID does not exist")
+  @Test
+  void shouldReturnNotFoundViaDeleteWhenIdIsInvalid() throws Exception {
+    String invalidStudySessionId = "999";
+    String errorMessage =
+        String.format(ExceptionMessages.CANNOT_FIND_STUDY_SESSION_BY_ID, invalidStudySessionId);
+
+    doThrow(new NotFoundException(errorMessage)).when(studySessionService)
+        .deleteById(invalidStudySessionId);
+
+    mockMvc.perform(delete(studySessionsPath + "/" + invalidStudySessionId))
+        .andExpect(status().isNotFound())
+        .andExpect(content().json("{\"error\":\"" + errorMessage + "\"}"));
+  }
 }
