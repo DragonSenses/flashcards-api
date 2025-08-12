@@ -1,4 +1,4 @@
-package com.ken.flashcards.error;
+package com.ken.flashcards.exception;
 
 import java.util.List;
 import java.util.Map;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.ken.flashcards.exception.BadRequestException;
-import com.ken.flashcards.exception.ConflictException;
-import com.ken.flashcards.exception.NotFoundException;
+import com.ken.flashcards.error.ErrorResponse;
+import com.ken.flashcards.error.ResponseHandler;
+import com.ken.flashcards.error.ValidationErrorExtractor;
 
 @ControllerAdvice
 public class GlobalExceptionHandler implements ResponseHandler {
