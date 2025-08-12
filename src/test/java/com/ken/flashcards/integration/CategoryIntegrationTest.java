@@ -79,4 +79,12 @@ public class CategoryIntegrationTest {
         .expectStatus().isNotFound().expectBody().json("{\"error\":\"" + errorMessage + "\"}");
   }
 
+  @DisplayName("GET /categories/details?name=... returns category when name exists")
+  @Test
+  void returnsCategoryByNameWhenExists() {
+    client.get().uri(path + "/details?name=Thermodynamics").accept(APPLICATION_JSON).exchange()
+        .expectStatus().isOk().expectBody().json("{'id':'2', 'name':'Thermodynamics'}");
+  }
+
+
 }
