@@ -30,4 +30,25 @@ public class CategoryIntegrationTest {
         .jsonPath("$").isArray().jsonPath("$[?(@.name == 'Computer Science')]").exists();
   }
 
+  @DisplayName("GET /categories returns all seeded categories")
+  @Test
+  void returnsAllSeededCategories() {
+    client.get().uri(path).accept(APPLICATION_JSON).exchange().expectStatus().isOk().expectBody()
+        .jsonPath("$").isArray()
+        .jsonPath("$[?(@.name == 'Applied Mathematics')]").exists()
+        .jsonPath("$[?(@.name == 'Biology')]").exists()
+        .jsonPath("$[?(@.name == 'Business')]").exists()
+        .jsonPath("$[?(@.name == 'Calculus')]").exists()
+        .jsonPath("$[?(@.name == 'Chemistry')]").exists()
+        .jsonPath("$[?(@.name == 'Discrete Math')]").exists()
+        .jsonPath("$[?(@.name == 'Drama')]").exists()
+        .jsonPath("$[?(@.name == 'Engineering')]").exists()
+        .jsonPath("$[?(@.name == 'History')]").exists()
+        .jsonPath("$[?(@.name == 'Nursing')]").exists()
+        .jsonPath("$[?(@.name == 'Physics')]").exists()
+        .jsonPath("$[?(@.name == 'Psychology')]").exists()
+        .jsonPath("$[?(@.name == 'Web Design')]").exists()
+        .jsonPath("$[?(@.name == 'Zoology')]").exists();
+  }
+
 }
