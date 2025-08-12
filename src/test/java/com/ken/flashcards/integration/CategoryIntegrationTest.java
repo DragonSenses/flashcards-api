@@ -59,4 +59,11 @@ public class CategoryIntegrationTest {
         .jsonPath("$[14].name").isEqualTo("Zoology");
   }
 
+  @DisplayName("GET /categories/{id} returns category when ID exists")
+  @Test
+  void returnsCategoryByIdWhenExists() {
+    client.get().uri(path + "/2").accept(APPLICATION_JSON).exchange().expectStatus().isOk()
+        .expectBody().json("{'id':'2', 'name':'Thermodynamics'}");
+  }
+
 }
