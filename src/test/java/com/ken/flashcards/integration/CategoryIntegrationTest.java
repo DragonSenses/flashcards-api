@@ -14,6 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID;
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_NAME;
 
 @Sql({"/data.sql"})
 @AutoConfigureWebTestClient
@@ -86,5 +87,15 @@ public class CategoryIntegrationTest {
         .expectStatus().isOk().expectBody().json("{'id':'2', 'name':'Thermodynamics'}");
   }
 
+  @DisplayName("GET /categories/details?name=... returns 404 when name does not exist")
+  @Test
+  void returns404WhenCategoryNameDoesNotExist() {
+    String nonexistentCategoryName = "Economics";
+    String errorMessage = format(CANNOT_FIND_CATEGORY_BY_NAME, nonexistentCategoryName);
+
+    client.get().uri(path + "/details?name=" + nonexistentCategoryName).accept(APPLICATION_JSON)
+        .exchange().expectStatus().isNotFound().expectBody()
+        .json("{\"error\":\"" + errorMessage + "\"}");
+  }
 
 }
