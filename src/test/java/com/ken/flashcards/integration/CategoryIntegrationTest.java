@@ -51,4 +51,12 @@ public class CategoryIntegrationTest {
         .jsonPath("$[?(@.name == 'Zoology')]").exists();
   }
 
+  @DisplayName("GET /categories returns categories sorted alphabetically")
+  @Test
+  void returnsCategoriesSortedAlphabetically() {
+    client.get().uri(path).accept(APPLICATION_JSON).exchange().expectStatus().isOk().expectBody()
+        .jsonPath("$.length()").isEqualTo(14).jsonPath("$[0].name").isEqualTo("Applied Mathematics")
+        .jsonPath("$[14].name").isEqualTo("Zoology");
+  }
+
 }
