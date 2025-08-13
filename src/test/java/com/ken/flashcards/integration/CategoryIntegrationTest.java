@@ -98,4 +98,13 @@ public class CategoryIntegrationTest {
         .json("{\"error\":\"" + errorMessage + "\"}");
   }
 
+  @DisplayName("POST /categories creates category when name is unique")
+  @Test
+  void createsCategoryWhenNameIsUnique() {
+    client.post().uri(path).contentType(APPLICATION_JSON).bodyValue("{\"name\":\"Information Technology\"}")
+        .exchange().expectStatus().isCreated().expectBody().jsonPath("$.id").exists()
+        .jsonPath("$.name").isEqualTo("Information Technology");
+  }
+
+
 }
