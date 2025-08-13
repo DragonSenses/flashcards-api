@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
@@ -15,6 +16,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID;
 import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_NAME;
+import static com.ken.flashcards.constants.ExceptionMessages.CATEGORY_NAME_ALREADY_EXISTS;
 
 @Sql({"/data.sql"})
 @AutoConfigureWebTestClient
@@ -104,6 +106,16 @@ public class CategoryIntegrationTest {
     client.post().uri(path).contentType(APPLICATION_JSON).bodyValue("{\"name\":\"Information Technology\"}")
         .exchange().expectStatus().isCreated().expectBody().jsonPath("$.id").exists()
         .jsonPath("$.name").isEqualTo("Information Technology");
+  }
+
+  @DisplayName("POST /categories returns 409 when name already exists")
+  @Test
+  void returns409WhenCreatingCategoryWithDuplicateName() {
+    String duplicateName = "Engineering";
+    String errorMessage = format(CATEGORY_NAME_ALREADY_EXISTS, duplicateName);
+    client.post().uri(path).contentType(APPLICATION_JSON).bodyValue("{\"name\":\"Engineering\"}")
+        .exchange().expectStatus().isEqualTo(CONFLICT.value()).expectBody()
+        .json("{\"error\":\"" + errorMessage + "\"}");
   }
 
 
