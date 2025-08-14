@@ -118,5 +118,11 @@ public class CategoryIntegrationTest {
         .json("{\"error\":\"" + errorMessage + "\"}");
   }
 
+  @DisplayName("POST /categories returns 400 when request body is empty")
+  @Test
+  void returns400WhenCreatingCategoryWithEmptyBody() {
+    client.post().uri(path).contentType(APPLICATION_JSON).bodyValue("").exchange().expectStatus()
+        .isBadRequest();
+  }
 
 }
