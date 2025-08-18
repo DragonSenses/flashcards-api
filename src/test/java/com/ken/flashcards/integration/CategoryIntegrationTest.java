@@ -125,4 +125,11 @@ public class CategoryIntegrationTest {
         .isBadRequest();
   }
 
+  @DisplayName("POST /categories returns 400 with error when name is empty")
+  @Test
+  void returns400WithErrorWhenCreatingCategoryWithEmptyName() {
+    client.post().uri(path).contentType(APPLICATION_JSON).bodyValue("{\"name\":\"\"}").exchange()
+        .expectStatus().isBadRequest().expectBody().json("{\"errors\":[\"name is required\"]}");
+  }
+
 }
