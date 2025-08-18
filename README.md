@@ -1,26 +1,15 @@
 # flashcards-api
 A modular and well-documented RESTful backend for managing flashcard-based study sessions. Built with Java 17, Spring Boot, and SQL, with OpenAPI docs via Swagger UI. Tested with JUnit, Mockito, and MockMvc. Designed with layered architecture and ADR-backed decisions.
 
-Work in Progress:
-- [x] DTO
-- [x] Mapper
-- [x] Repo
-- [x] Exception
-- [x] Service
-- [x] Controller
-- [x] Mock SQL Test Data
-- [x] Unit Tests
-  - [x] CategoryService
-  - [x] StudySessionService
-  - [x] FlashcardService
-  - [x] Mapper null-safe transformations
-  - [x] DTO validation logic
-- [ ] Controller Tests (`@WebMvcTest`, `MockMvc`)
-- [ ] Integration Tests (`@SpringBootTest`)
-  - [ ] Swagger UI
-  - [ ] Service to Repository Integration
-  - [ ] Controller to Service Integration
-  - [ ] etc. (Validation, Exception, DTO Mapper)
+## 🧪 Testing
+
+The app includes a comprehensive suite of **unit** and **integration** tests, achieving _near 100% line coverage_. Key areas tested include:
+
+- DTO validation and null-safe mappings
+- Service logic for categories, flashcards, and study sessions
+- Controller endpoints via `@WebMvcTest` and `MockMvc`
+- Integration across controller, service, and repository layers
+- Exception handling and edge-case validation
 
 # High Level Architecture
 
@@ -78,6 +67,13 @@ The diagram below illustrates how exceptions propagate through the service layer
 
 - **Flashcard Operations:**  
   - CRUD + `GET /flashcards/session/{studySessionId}`
+
+
+## 📚 Documentation
+
+- Auto-generated **Swagger UI** available at:
+  - [`http://localhost:8080/swagger-ui/index.html`](http://localhost:8080/swagger-ui/index.html)
+- OpenAPI spec accessible at `/v3/api-docs`
 
 # Instructions to Run Locally
 
