@@ -132,4 +132,12 @@ public class CategoryIntegrationTest {
         .expectStatus().isBadRequest().expectBody().json("{\"errors\":[\"name is required\"]}");
   }
 
+  @DisplayName("PUT /categories updates category when ID exists")
+  @Test
+  void updatesCategoryWhenIdExists() {
+    client.put().uri(path).contentType(APPLICATION_JSON)
+        .bodyValue("{\"id\":\"1\", \"name\":\"Neuroscience\"}").exchange().expectStatus().isOk()
+        .expectBody().json("{\"id\":\"1\", \"name\":\"Neuroscience\"}");
+  }
+
 }
