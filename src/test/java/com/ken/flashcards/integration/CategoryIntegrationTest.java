@@ -140,4 +140,12 @@ public class CategoryIntegrationTest {
         .expectBody().json("{\"id\":\"1\", \"name\":\"Neuroscience\"}");
   }
 
+  @DisplayName("PUT /categories creates category when ID does not exist")
+  @Test
+  void createsCategoryWhenIdDoesNotExist() {
+    client.put().uri(path).contentType(APPLICATION_JSON)
+        .bodyValue("{\"id\":\"321\", \"name\":\"Microbiology\"}").exchange().expectStatus()
+        .isCreated().expectBody().json("{\"id\":\"321\", \"name\":\"Microbiology\"}");
+  }
+
 }
