@@ -156,4 +156,12 @@ public class CategoryIntegrationTest {
         .expectBody().json("{\"errors\":[\"id is required\"]}");
   }
 
+  @DisplayName("PUT /categories returns 400 with error when name is empty")
+  @Test
+  void returns400WithErrorWhenUpdatingCategoryWithEmptyName() {
+    client.put().uri(path).contentType(APPLICATION_JSON).bodyValue("{\"id\":\"1\", \"name\":\"\"}")
+        .exchange().expectStatus().isBadRequest().expectBody()
+        .json("{\"errors\":[\"name is required\"]}");
+  }
+
 }
