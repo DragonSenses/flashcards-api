@@ -148,4 +148,12 @@ public class CategoryIntegrationTest {
         .isCreated().expectBody().json("{\"id\":\"321\", \"name\":\"Microbiology\"}");
   }
 
+  @DisplayName("PUT /categories returns 400 with error when ID is empty")
+  @Test
+  void returns400WithErrorWhenUpdatingCategoryWithEmptyId() {
+    client.put().uri(path).contentType(APPLICATION_JSON)
+        .bodyValue("{\"id\":\"\", \"name\":\"Nursing\"}").exchange().expectStatus().isBadRequest()
+        .expectBody().json("{\"errors\":[\"id is required\"]}");
+  }
+
 }
