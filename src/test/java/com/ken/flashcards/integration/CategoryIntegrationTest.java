@@ -164,4 +164,14 @@ public class CategoryIntegrationTest {
         .json("{\"errors\":[\"name is required\"]}");
   }
 
+  @DisplayName("PUT /categories returns 409 when name already exists")
+  @Test
+  void returns409WhenUpdatingCategoryWithDuplicateName() {
+    String duplicateName = "Engineering";
+    String errorMessage = format(CATEGORY_NAME_ALREADY_EXISTS, duplicateName);
+    client.put().uri(path).contentType(APPLICATION_JSON)
+        .bodyValue("{\"id\":\"1\", \"name\":\"Engineering\"}").exchange().expectStatus()
+        .isEqualTo(CONFLICT.value()).expectBody().json("{\"error\":\"" + errorMessage + "\"}");
+  }
+
 }
