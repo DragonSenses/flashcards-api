@@ -174,4 +174,11 @@ public class CategoryIntegrationTest {
         .isEqualTo(CONFLICT.value()).expectBody().json("{\"error\":\"" + errorMessage + "\"}");
   }
 
+  @DisplayName("PUT /categories returns 400 when request body is empty")
+  @Test
+  void returns400WhenUpdatingCategoryWithEmptyBody() {
+    client.put().uri(path).contentType(APPLICATION_JSON).bodyValue("").exchange().expectStatus()
+        .isBadRequest();
+  }
+
 }
