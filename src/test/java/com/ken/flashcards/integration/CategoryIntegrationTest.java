@@ -181,4 +181,10 @@ public class CategoryIntegrationTest {
         .isBadRequest();
   }
 
+  @DisplayName("DELETE /categories/{id} removes category when ID exists")
+  @Test
+  void deletesCategoryByIdWhenExists() {
+    client.delete().uri(path + "/1").exchange().expectStatus().isNoContent();
+  }
+
 }
