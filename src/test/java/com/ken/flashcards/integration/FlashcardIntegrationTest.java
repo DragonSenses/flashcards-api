@@ -1,5 +1,8 @@
 package com.ken.flashcards.integration;
 
+import static java.lang.String.format;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +12,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_FLASHCARD_BY_ID;
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_STUDY_SESSION_BY_ID;
 
 @Sql({"/data.sql"})
 @AutoConfigureWebTestClient
@@ -70,5 +76,59 @@ public class FlashcardIntegrationTest {
         .jsonPath("$[?(@.question == 'What are the four types of nuclear reactions?')]").exists()
         .jsonPath("$[?(@.question == 'What is nuclear fusion?')]").exists();
   }
+
+  @DisplayName("GET /flashcards/{id} should return flashcard when ID exists")
+  @Test
+  void shouldReturnFlashcardByIdWhenExists() {
+    String flashcardId = "1";
+    String expectedResponseBody = """
+        {
+            "id":"1",
+            "studySessionId":"1",
+            "question":"What kind of star is the sun?",
+            "answer":"Yellow dwarf"
+        }
+        """;
+
+    client.get().uri(path + "/" + flashcardId).accept(APPLICATION_JSON).exchange().expectStatus()
+        .isOk().expectBody().json(expectedResponseBody);
+  }
+
+  @DisplayName("GET /flashcards/{id} should return 404 when flashcard ID does not exist")
+  @Test
+  void shouldReturnNotFoundWhenFlashcardIdDoesNotExist() {
+    String nonexistentId = "3";
+    String errorMessage = format(CANNOT_FIND_FLASHCARD_BY_ID, nonexistentId);
+
+    client.get().uri(path + "/" + nonexistentId).accept(APPLICATION_JSON).exchange().expectStatus()
+        .isNotFound().expectBody().json("{\"error\":\"" + errorMessage + "\"}");
+  }
+
+  @Test
+  void findsAllByStudySessionId() {
+    client.get().uri(path + "/details?studySessionId=1").accept(APPLICATION_JSON).exchange()
+        .expectStatus().isOk().expectBody().jsonPath("$").isArray().json("""
+            [
+                {
+                    'id':'1',
+                    'studySessionId':'1',
+                    'question':'What kind of star is the sun?',
+                    'answer':'Yellow dwarf'
+                }
+            ]
+            """);
+  }
+
+  @DisplayName("GET /flashcards/details should return 404 when studySessionId does not exist")
+  @Test
+  void shouldReturnNotFoundWhenStudySessionIdDoesNotExist() {
+    String nonexistentStudySessionId = "3";
+    String errorMessage = format(CANNOT_FIND_STUDY_SESSION_BY_ID, nonexistentStudySessionId);
+
+    client.get().uri(path + "/details?studySessionId=" + nonexistentStudySessionId)
+        .accept(APPLICATION_JSON).exchange().expectStatus().isNotFound().expectBody()
+        .json("{\"error\":\"" + errorMessage + "\"}");
+  }
+
 
 }
