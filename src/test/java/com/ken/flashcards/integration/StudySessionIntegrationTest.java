@@ -93,4 +93,21 @@ public class StudySessionIntegrationTest {
         .isNotFound().expectBody().json("{\"error\":\"" + errorMessage + "\"}");
   }
 
+  @DisplayName("GET /study-sessions/details should return all sessions for a given categoryId")
+  @Test
+  void shouldReturnStudySessionsByCategoryId() {
+    String categoryId = "1";
+
+    client.get().uri(path + "/details?categoryId=" + categoryId).accept(APPLICATION_JSON).exchange()
+        .expectStatus().isOk().expectBody().jsonPath("$").isArray().json("""
+            [
+                {
+                    "id":"1",
+                    "categoryId":"1",
+                    "name":"Art History"
+                }
+            ]
+            """);
+  }
+
 }
