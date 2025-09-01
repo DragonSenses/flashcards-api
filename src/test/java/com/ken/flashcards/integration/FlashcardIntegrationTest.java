@@ -195,4 +195,35 @@ public class FlashcardIntegrationTest {
             """);
   }
 
+  @DisplayName("PUT /flashcards should update flashcard when ID exists")
+  @Test
+  void shouldUpdateFlashcardWhenIdExists() {
+    String requestBody = """
+        {
+            "id":"1",
+            "studySessionId":"1",
+            "question":"Which is the closest planet to the Sun?",
+            "answer":"Mercury"
+        }
+        """;
+
+    client.put().uri(path).contentType(APPLICATION_JSON).bodyValue(requestBody).exchange()
+        .expectStatus().isOk().expectBody().json(requestBody);
+  }
+
+  @DisplayName("PUT /flashcards should create flashcard when ID does not exist")
+  @Test
+  void shouldCreateFlashcardWhenIdDoesNotExist() {
+    String requestBody = """
+        {
+            "id":"3",
+            "studySessionId":"1",
+            "question":"Which is the closest planet to the Sun?",
+            "answer":"Mercury"
+        }
+        """;
+
+    client.put().uri(path).contentType(APPLICATION_JSON).bodyValue(requestBody).exchange()
+        .expectStatus().isCreated().expectBody().json(requestBody);
+  }
 }
