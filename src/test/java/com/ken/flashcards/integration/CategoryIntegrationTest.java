@@ -187,4 +187,12 @@ public class CategoryIntegrationTest {
     client.delete().uri(path + "/1").exchange().expectStatus().isNoContent();
   }
 
+  @DisplayName("DELETE /categories/{id} returns 404 when ID does not exist")
+  @Test
+  void returns404WhenDeletingCategoryThatDoesNotExist() {
+    String nonexistentCategoryId = "99999999";
+    String errorMessage = format(CANNOT_FIND_CATEGORY_BY_ID, nonexistentCategoryId);
+    client.delete().uri(path + "/" + nonexistentCategoryId).accept(APPLICATION_JSON).exchange().expectStatus().isNotFound()
+        .expectBody().json("{\"error\":\"" + errorMessage + "\"}");
+  }
 }
