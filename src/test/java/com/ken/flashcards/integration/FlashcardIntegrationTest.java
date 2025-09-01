@@ -130,5 +130,69 @@ public class FlashcardIntegrationTest {
         .json("{\"error\":\"" + errorMessage + "\"}");
   }
 
+  @DisplayName("POST /flashcards should create flashcard when request is valid")
+  @Test
+  void shouldCreateFlashcardWhenRequestIsValid() {
+    String requestBody = """
+        {
+            "studySessionId":"1",
+            "question":"Which is the largest planet of the solar system?",
+            "answer":"Jupiter"
+        }
+        """;
+
+    client.post().uri(path).contentType(APPLICATION_JSON).bodyValue(requestBody).exchange()
+        .expectStatus().isCreated().expectBody().jsonPath("$.id").exists()
+        .jsonPath("$.studySessionId").isEqualTo("1").jsonPath("$.question")
+        .isEqualTo("Which is the largest planet of the solar system?").jsonPath("$.answer")
+        .isEqualTo("Jupiter");
+  }
+
+  @DisplayName("POST /flashcards should return 404 when studySessionId does not exist")
+  @Test
+  void shouldReturnNotFoundWhenCreatingFlashcardWithNonexistentStudySession() {
+    String invalidStudySessionId = "3";
+    String requestBody = """
+        {
+            "studySessionId":"3",
+            "question":"What is tennis?",
+            "answer":"A sport that is played with a ball and two rackets"
+        }
+        """;
+    String errorMessage = format(CANNOT_FIND_STUDY_SESSION_BY_ID, invalidStudySessionId);
+
+    client.post().uri(path).contentType(APPLICATION_JSON).bodyValue(requestBody).exchange()
+        .expectStatus().isNotFound().expectBody().json("{\"error\":\"" + errorMessage + "\"}");
+  }
+
+  @DisplayName("POST /flashcards should return 400 when request body is empty")
+  @Test
+  void shouldReturnBadRequestWhenCreatingFlashcardWithEmptyRequestBody() {
+    client.post().uri(path).contentType(APPLICATION_JSON).bodyValue("").exchange().expectStatus()
+        .isBadRequest();
+  }
+
+  @DisplayName("POST /flashcards should return 400 with validation errors when fields are empty")
+  @Test
+  void shouldReturnBadRequestWithErrorsWhenCreatingFlashcardWithEmptyValues() {
+    String requestBody = """
+        {
+            "studySessionId":"",
+            "question":"",
+            "answer":""
+        }
+        """;
+
+    client.post().uri(path).contentType(APPLICATION_JSON).bodyValue(requestBody).exchange()
+        .expectStatus().isBadRequest().expectBody().json("""
+            {
+                "errors": [
+                    "study session id is required",
+                    "question is required",
+                    "answer is required"
+                ]
+            }
+            """);
+  }
 
 }
