@@ -1,5 +1,7 @@
 package com.ken.flashcards.integration;
 
+import static java.lang.String.format;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_STUDY_SESSION_BY_ID;
 
 @Sql({"/data.sql"})
 @AutoConfigureWebTestClient
@@ -77,6 +81,16 @@ public class StudySessionIntegrationTest {
                 "name":"Art History"
             }
             """);
+  }
+
+  @DisplayName("GET /study-sessions/{id} should return 404 when ID does not exist")
+  @Test
+  void shouldReturnNotFoundWhenStudySessionIdDoesNotExist() {
+    String nonexistentId = "3";
+    String errorMessage = format(CANNOT_FIND_STUDY_SESSION_BY_ID, nonexistentId);
+
+    client.get().uri(path + "/" + nonexistentId).accept(APPLICATION_JSON).exchange().expectStatus()
+        .isNotFound().expectBody().json("{\"error\":\"" + errorMessage + "\"}");
   }
 
 }
