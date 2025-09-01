@@ -1,5 +1,6 @@
 package com.ken.flashcards.integration;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,41 @@ public class StudySessionIntegrationTest {
   void loadTestData() {
     client.get().uri(path).accept(APPLICATION_JSON).exchange().expectStatus().isOk().expectBody()
         .jsonPath("$").isArray().jsonPath("$[?(@.name == 'Art History')]").exists();
+  }
+
+  @DisplayName("GET /study-sessions should return all seeded study sessions")
+  @Test
+  void shouldReturnAllSeededStudySessions() {
+    client.get().uri(path).accept(APPLICATION_JSON).exchange().expectStatus().isOk().expectBody()
+        .jsonPath("$").isArray().jsonPath("$[?(@.name == 'Chemistry fundamentals')]").exists()
+        .jsonPath("$[?(@.name == 'Medical breakthroughs')]").exists()
+        .jsonPath("$[?(@.name == 'Mathematical principles')]").exists()
+        .jsonPath("$[?(@.name == 'Ancient civilizations')]").exists()
+        .jsonPath("$[?(@.name == 'Cell biology')]").exists()
+        .jsonPath("$[?(@.name == 'Renaissance art')]").exists()
+        .jsonPath("$[?(@.name == 'Human anatomy')]").exists()
+        .jsonPath("$[?(@.name == 'Calculus basics')]").exists()
+        .jsonPath("$[?(@.name == 'World history')]").exists()
+        .jsonPath("$[?(@.name == 'Digestive system')]").exists()
+        .jsonPath("$[?(@.name == 'Physics discoveries')]").exists()
+        .jsonPath("$[?(@.name == 'Design and proportion')]").exists()
+        .jsonPath("$[?(@.name == 'Physical properties of water')]").exists()
+        .jsonPath("$[?(@.name == 'Cellular respiration')]").exists()
+        .jsonPath("$[?(@.name == 'Legal history')]").exists()
+        .jsonPath("$[?(@.name == 'Software design principles')]").exists()
+        .jsonPath("$[?(@.name == 'Object oriented programming')]").exists()
+        .jsonPath("$[?(@.name == 'Functional programming')]").exists()
+        .jsonPath("$[?(@.name == 'Physics formulas')]").exists()
+        .jsonPath("$[?(@.name == 'Electrical properties')]").exists()
+        .jsonPath("$[?(@.name == 'Classical composers')]").exists()
+        .jsonPath("$[?(@.name == 'Music theory')]").exists()
+        .jsonPath("$[?(@.name == 'Mathematics')]").exists()
+        .jsonPath("$[?(@.name == 'Chinese history')]").exists()
+        .jsonPath("$[?(@.name == 'Photosynthesis')]").exists()
+        .jsonPath("$[?(@.name == 'Chemical reactions')]").exists()
+        .jsonPath("$[?(@.name == 'Bonding types')]").exists()
+        .jsonPath("$[?(@.name == 'Nuclear chemistry')]").exists()
+        .jsonPath("$[?(@.name == 'Fusion reactions')]").exists();
   }
 
 }
