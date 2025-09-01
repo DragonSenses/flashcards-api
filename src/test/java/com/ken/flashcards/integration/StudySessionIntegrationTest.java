@@ -64,4 +64,19 @@ public class StudySessionIntegrationTest {
         .jsonPath("$[?(@.name == 'Fusion reactions')]").exists();
   }
 
+  @DisplayName("GET /study-sessions/{id} should return study session when ID exists")
+  @Test
+  void shouldReturnStudySessionByIdWhenExists() {
+    String studySessionId = "1";
+
+    client.get().uri(path + "/" + studySessionId).accept(APPLICATION_JSON).exchange().expectStatus()
+        .isOk().expectBody().json("""
+            {
+                "id":"1",
+                "categoryId":"1",
+                "name":"Art History"
+            }
+            """);
+  }
+
 }
