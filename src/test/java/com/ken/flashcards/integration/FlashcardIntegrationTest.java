@@ -226,4 +226,23 @@ public class FlashcardIntegrationTest {
     client.put().uri(path).contentType(APPLICATION_JSON).bodyValue(requestBody).exchange()
         .expectStatus().isCreated().expectBody().json(requestBody);
   }
+
+  @DisplayName("DELETE /flashcards/{id} should remove flashcard when ID exists")
+  @Test
+  void shouldDeleteFlashcardByIdWhenExists() {
+    String flashcardId = "1";
+
+    client.delete().uri(path + "/" + flashcardId).accept(APPLICATION_JSON).exchange().expectStatus()
+        .isNoContent();
+  }
+
+  @DisplayName("DELETE /flashcards/{id} should return 404 when ID does not exist")
+  @Test
+  void shouldReturnNotFoundWhenDeletingFlashcardWithNonexistentId() {
+    String nonexistentId = "3";
+    String errorMessage = format(CANNOT_FIND_FLASHCARD_BY_ID, nonexistentId);
+
+    client.delete().uri(path + "/" + nonexistentId).accept(APPLICATION_JSON).exchange()
+        .expectStatus().isNotFound().expectBody().json("{\"error\":\"" + errorMessage + "\"}");
+  }
 }
