@@ -147,4 +147,12 @@ public class StudySessionIntegrationTest {
         .json("{\"error\":\"" + errorMessage + "\"}");
   }
 
+  @DisplayName("POST /study-sessions should return 400 when request body is empty")
+  @Test
+  void shouldReturnBadRequestWhenCreatingStudySessionWithEmptyRequestBody() {
+    client.post().uri(path).contentType(APPLICATION_JSON).bodyValue("").exchange().expectStatus()
+        .isBadRequest();
+  }
+
+
 }
