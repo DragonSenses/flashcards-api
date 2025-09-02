@@ -135,4 +135,16 @@ public class StudySessionIntegrationTest {
         .isEqualTo(categoryId).jsonPath("$.name").isEqualTo(name);
   }
 
+  @DisplayName("POST /study-sessions should return 404 when categoryId does not exist")
+  @Test
+  void shouldReturnNotFoundWhenCreatingStudySessionWithNonexistentCategory() {
+    String errorMessage = format(CANNOT_FIND_CATEGORY_BY_ID, NONEXISTENT_CATEGORY_ID);
+
+    client.post().uri(path).contentType(APPLICATION_JSON)
+        .bodyValue("{\"categoryId\":\"" + NONEXISTENT_CATEGORY_ID
+            + "\", \"name\":\"Classical Music authors\"}")
+        .exchange().expectStatus().isNotFound().expectBody()
+        .json("{\"error\":\"" + errorMessage + "\"}");
+  }
+
 }
