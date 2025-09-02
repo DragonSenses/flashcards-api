@@ -123,5 +123,16 @@ public class StudySessionIntegrationTest {
         .json("{\"error\":\"" + errorMessage + "\"}");
   }
 
+  @DisplayName("POST /study-sessions should create study session when request is valid")
+  @Test
+  void shouldCreateStudySessionWhenRequestIsValid() {
+    String categoryId = "1";
+    String name = "Stellar Classification";
+
+    client.post().uri(path).contentType(APPLICATION_JSON)
+        .bodyValue("{\"categoryId\":\"" + categoryId + "\", \"name\":\"" + name + "\"}").exchange()
+        .expectStatus().isCreated().expectBody().jsonPath("$.id").exists().jsonPath("$.categoryId")
+        .isEqualTo(categoryId).jsonPath("$.name").isEqualTo(name);
+  }
 
 }
