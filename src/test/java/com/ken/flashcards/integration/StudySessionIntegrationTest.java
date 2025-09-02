@@ -29,6 +29,7 @@ public class StudySessionIntegrationTest {
   WebTestClient client;
 
   private static final String NONEXISTENT_CATEGORY_ID = "987654321";
+  private static final String NONEXISTENT_SESSION_ID = "987654321";
 
   @Test
   void loadTestData() {
@@ -89,10 +90,9 @@ public class StudySessionIntegrationTest {
   @DisplayName("GET /study-sessions/{id} should return 404 when ID does not exist")
   @Test
   void shouldReturnNotFoundWhenStudySessionIdDoesNotExist() {
-    String nonexistentId = "3";
-    String errorMessage = format(CANNOT_FIND_STUDY_SESSION_BY_ID, nonexistentId);
+    String errorMessage = format(CANNOT_FIND_STUDY_SESSION_BY_ID, NONEXISTENT_SESSION_ID);
 
-    client.get().uri(path + "/" + nonexistentId).accept(APPLICATION_JSON).exchange().expectStatus()
+    client.get().uri(path + "/" + NONEXISTENT_SESSION_ID).accept(APPLICATION_JSON).exchange().expectStatus()
         .isNotFound().expectBody().json("{\"error\":\"" + errorMessage + "\"}");
   }
 
@@ -154,5 +154,5 @@ public class StudySessionIntegrationTest {
         .isBadRequest();
   }
 
-
+  
 }
