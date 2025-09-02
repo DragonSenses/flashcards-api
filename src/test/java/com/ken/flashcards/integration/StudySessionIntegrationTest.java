@@ -13,6 +13,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_CATEGORY_BY_ID;
 import static com.ken.flashcards.constants.ExceptionMessages.CANNOT_FIND_STUDY_SESSION_BY_ID;
 
 @Sql({"/data.sql"})
@@ -26,6 +27,8 @@ public class StudySessionIntegrationTest {
 
   @Autowired
   WebTestClient client;
+
+  private static final String NONEXISTENT_CATEGORY_ID = "987654321";
 
   @Test
   void loadTestData() {
@@ -109,5 +112,16 @@ public class StudySessionIntegrationTest {
             ]
             """);
   }
+
+  @DisplayName("GET /study-sessions/details should return 404 when categoryId does not exist")
+  @Test
+  void shouldReturnNotFoundWhenCategoryIdDoesNotExist() {
+    String errorMessage = format(CANNOT_FIND_CATEGORY_BY_ID, NONEXISTENT_CATEGORY_ID);
+
+    client.get().uri(path + "/details?categoryId=" + NONEXISTENT_CATEGORY_ID).accept(APPLICATION_JSON)
+        .exchange().expectStatus().isNotFound().expectBody()
+        .json("{\"error\":\"" + errorMessage + "\"}");
+  }
+
 
 }
