@@ -200,4 +200,16 @@ public class StudySessionIntegrationTest {
         .expectStatus().isCreated().expectBody().json(requestBody);
   }
 
+  @DisplayName("PUT /study-sessions should return 404 when categoryId does not exist")
+  @Test
+  void shouldReturnNotFoundWhenUpdatingStudySessionWithNonexistentCategory() {
+    String errorMessage = format(CANNOT_FIND_CATEGORY_BY_ID, NONEXISTENT_CATEGORY_ID);
+
+    client.put().uri(path).contentType(APPLICATION_JSON)
+        .bodyValue("{\"id\":\"1\", \"categoryId\":\"" + NONEXISTENT_CATEGORY_ID
+            + "\", \"name\":\"Classical Music\"}")
+        .exchange().expectStatus().isNotFound().expectBody()
+        .json("{\"error\":\"" + errorMessage + "\"}");
+  }
+
 }
