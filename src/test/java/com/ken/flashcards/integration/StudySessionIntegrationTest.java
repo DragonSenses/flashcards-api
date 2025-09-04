@@ -154,5 +154,13 @@ public class StudySessionIntegrationTest {
         .isBadRequest();
   }
 
-  
+  @DisplayName("POST /study-sessions should return 400 with error when categoryId is empty")
+  @Test
+  void shouldReturnBadRequestWithErrorWhenCreatingStudySessionWithEmptyCategoryId() {
+    client.post().uri(path).contentType(APPLICATION_JSON)
+        .bodyValue("{\"categoryId\":\"\", \"name\":\"Esports\"}").exchange().expectStatus()
+        .isBadRequest().expectBody().json("{\"errors\":[\"category id is required\"]}");
+  }
+
+
 }
