@@ -166,7 +166,7 @@ public class StudySessionIntegrationTest {
   @Test
   void shouldReturnBadRequestWithErrorWhenCreatingStudySessionWithEmptyName() {
     client.post().uri(path).contentType(APPLICATION_JSON)
-        .bodyValue("{\"categoryId\":\"3\", \"name\":\"\"}").exchange().expectStatus().isBadRequest()
+        .bodyValue("{\"categoryId\":\"321\", \"name\":\"\"}").exchange().expectStatus().isBadRequest()
         .expectBody().json("{\"errors\":[\"name is required\"]}");
   }
 
@@ -183,6 +183,21 @@ public class StudySessionIntegrationTest {
 
     client.put().uri(path).contentType(APPLICATION_JSON).bodyValue(requestBody).exchange()
         .expectStatus().isOk().expectBody().json(requestBody);
+  }
+
+  @DisplayName("PUT /study-sessions should create study session when ID does not exist")
+  @Test
+  void shouldCreateStudySessionWhenIdDoesNotExist() {
+    String requestBody = """
+        {
+            "id":"321",
+            "categoryId":"1",
+            "name":"Stellar Classification"
+        }
+        """;
+
+    client.put().uri(path).contentType(APPLICATION_JSON).bodyValue(requestBody).exchange()
+        .expectStatus().isCreated().expectBody().json(requestBody);
   }
 
 }
