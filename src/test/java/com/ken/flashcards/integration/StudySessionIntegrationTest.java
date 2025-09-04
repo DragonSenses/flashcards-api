@@ -170,4 +170,19 @@ public class StudySessionIntegrationTest {
         .expectBody().json("{\"errors\":[\"name is required\"]}");
   }
 
+  @DisplayName("PUT /study-sessions should update study session when ID exists")
+  @Test
+  void shouldUpdateStudySessionWhenIdExists() {
+    String requestBody = """
+        {
+            "id":"1",
+            "categoryId":"1",
+            "name":"Stellar Classification"
+        }
+        """;
+
+    client.put().uri(path).contentType(APPLICATION_JSON).bodyValue(requestBody).exchange()
+        .expectStatus().isOk().expectBody().json(requestBody);
+  }
+
 }
