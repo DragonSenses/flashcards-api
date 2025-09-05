@@ -244,5 +244,13 @@ public class StudySessionIntegrationTest {
         .json("{\"errors\":[\"category id is required\"]}");
   }
 
+  @DisplayName("DELETE /study-sessions/{id} should remove study session when ID exists")
+  @Test
+  void shouldDeleteStudySessionByIdWhenExists() {
+    String studySessionId = "1";
+
+    client.delete().uri(path + "/" + studySessionId).accept(APPLICATION_JSON).exchange()
+        .expectStatus().isNoContent();
+  }
 
 }
