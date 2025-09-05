@@ -235,4 +235,14 @@ public class StudySessionIntegrationTest {
         .isBadRequest().expectBody().json("{\"errors\":[\"name is required\"]}");
   }
 
+  @DisplayName("PUT /study-sessions should return 400 with error when categoryId is empty")
+  @Test
+  void shouldReturnBadRequestWithErrorWhenUpdatingStudySessionWithEmptyCategoryId() {
+    client.put().uri(path).contentType(APPLICATION_JSON)
+        .bodyValue("{\"id\":\"1\", \"categoryId\":\"\", \"name\":\"Planet Classification\"}").exchange()
+        .expectStatus().isBadRequest().expectBody()
+        .json("{\"errors\":[\"category id is required\"]}");
+  }
+
+
 }
