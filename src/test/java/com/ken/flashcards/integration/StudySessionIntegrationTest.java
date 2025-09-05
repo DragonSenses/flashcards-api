@@ -253,4 +253,13 @@ public class StudySessionIntegrationTest {
         .expectStatus().isNoContent();
   }
 
+  @DisplayName("DELETE /study-sessions/{id} should return 404 when ID does not exist")
+  @Test
+  void shouldReturnNotFoundWhenDeletingStudySessionWithNonexistentId() {
+    String errorMessage = format(CANNOT_FIND_STUDY_SESSION_BY_ID, NONEXISTENT_SESSION_ID);
+
+    client.delete().uri(path + "/" + NONEXISTENT_SESSION_ID).accept(APPLICATION_JSON).exchange()
+        .expectStatus().isNotFound().expectBody().json("{\"error\":\"" + errorMessage + "\"}");
+  }
+
 }
