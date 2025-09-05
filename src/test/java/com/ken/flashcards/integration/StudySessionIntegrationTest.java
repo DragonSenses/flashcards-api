@@ -226,4 +226,13 @@ public class StudySessionIntegrationTest {
         .bodyValue("{\"id\":\"\", \"categoryId\":\"1\", \"name\":\"Planet Classification\"}").exchange()
         .expectStatus().isBadRequest().expectBody().json("{\"errors\":[\"id is required\"]}");
   }
+
+  @DisplayName("PUT /study-sessions should return 400 with error when name is empty")
+  @Test
+  void shouldReturnBadRequestWithErrorWhenUpdatingStudySessionWithEmptyName() {
+    client.put().uri(path).contentType(APPLICATION_JSON)
+        .bodyValue("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"\"}").exchange().expectStatus()
+        .isBadRequest().expectBody().json("{\"errors\":[\"name is required\"]}");
+  }
+
 }
